@@ -39,6 +39,8 @@ import {
   focusTextArea,
   focusUpperCell,
   focusLowerCell,
+  rowFocus,
+  cellFocus,
 } from "./common";
 import { EditableCell } from "./EditableCell";
 import "./Table.css";
@@ -328,13 +330,51 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
   const commonCellProps = {};
 
+  const trProps = useCallback(
+    (rowIndex: number) => ({
+      tabIndex: 0,
+      onKeyDown: (e: React.KeyboardEvent<HTMLTableRowElement>) => {
+        const key = e.key;
+        console.log("trProps");
+
+        if (key == "ArrowRight" && e.currentTarget === document.activeElement) {
+          cellFocus(e.currentTarget.cells[1]);
+        }
+        /* TODO: Table: implement row navigation */
+        /* TODO: FocusUtils: row context menu when row is focused */
+      },
+      // onContextMenu: (e: ContextMenuEvent) => {
+      //   const target = e.target as HTMLElement;
+      //   if (contextMenuIsAvailable(target)) {
+      //     e.preventDefault();
+      //     setTableHandlerAllowedOperations([
+      //       ...getColumnOperations(columnIndex),
+      //       TableOperation.RowInsertAbove,
+      //       TableOperation.RowInsertBelow,
+      //       ...(rows.length > 1 ? [TableOperation.RowDelete] : []),
+      //       TableOperation.RowClear,
+      //       TableOperation.RowDuplicate,
+      //     ]);
+      //     tableHandlerStateUpdate(target, getColumnsAtLastLevel(tableColumns, headerLevels)[columnIndex]);
+      //     setLastSelectedRowIndex(rowIndex);
+      //   }
+      // },
+    }),
+    // [getColumnOperations, tableHandlerStateUpdate, contextMenuIsAvailable, tableColumns, rows, headerLevels]
+    []
+  );
+
   const tdProps = useCallback(
     (columnIndex: number, rowIndex: number) => ({
       tabIndex: 0,
       onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
         const key = e.key;
         if (key == "ArrowLeft") {
-          focusPrevCell(e.currentTarget);
+          if (columnIndex <= 1) {
+            rowFocus(e.currentTarget);
+          } else {
+            focusPrevCell(e.currentTarget);
+          }
         } else if (key == "ArrowRight") {
           focusNextCell(e.currentTarget);
         } else if (key == "ArrowUp") {
@@ -423,6 +463,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
           getColumnKey={onGetColumnKey}
           onColumnsUpdate={onColumnsUpdateCallback}
           headerVisibility={headerVisibility}
+          trProps={trProps}
           tdProps={tdProps}
         >
           {children}

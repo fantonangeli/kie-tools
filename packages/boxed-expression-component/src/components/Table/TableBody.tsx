@@ -34,6 +34,8 @@ export interface TableBodyProps {
   getColumnKey: (column: Column) => string;
   /** Function to be executed when columns are modified */
   onColumnsUpdate?: (columns: Column[]) => void;
+  /** Tr props */
+  trProps: (rowIndex: number) => any;
   /** Td props */
   tdProps: (cellIndex: number, rowIndex: number) => any;
 }
@@ -45,6 +47,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   getRowKey,
   getColumnKey,
   onColumnsUpdate,
+  trProps,
   tdProps,
 }) => {
   const headerVisibilityMemo = useMemo(() => headerVisibility ?? TableHeaderVisibility.Full, [headerVisibility]);
@@ -98,7 +101,7 @@ export const TableBody: React.FunctionComponent<TableBodyProps> = ({
   const renderBodyRow = useCallback(
     (row: Row, rowIndex: number) => {
       tableInstance.prepareRow(row);
-      const rowProps = { ...row.getRowProps(), style: {} };
+      const rowProps = { ...row.getRowProps(), ...trProps(rowIndex), style: {} };
       const RowDelegate = (row.original as any).rowDelegate;
       const rowKey = getRowKey(row);
       const rowClassNames = `${rowKey} table-row`;

@@ -67,11 +67,25 @@ export const cellFocus = (cell: HTMLTableDataCellElement | null): void => {
     return;
   }
 
-  /* TODO: FocusUtils: row focus  */
-  /* TODO: FocusUtils: row context menu when row is focused */
   /* TODO: FocusUtils: ArrowNavigation with nested tables  */
 
   cell.focus();
+};
+
+/**
+ * do the focus of a row
+ *
+ * @param cell the cell of the row to focus
+ * @returns
+ */
+export const rowFocus = (cell: HTMLElement): void => {
+  const row = cell.parentElement;
+
+  if (!row) {
+    return;
+  }
+
+  row.focus();
 };
 
 /**

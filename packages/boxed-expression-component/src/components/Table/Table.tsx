@@ -389,7 +389,6 @@ export const Table: React.FunctionComponent<TableProps> = ({
   const tdProps = useCallback(
     (columnIndex: number, rowIndex: number) => ({
       tabIndex: 0,
-      /* TODO: on click first cell of a row -> focus row */
       onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
         const key = e.key;
         if (key == "ArrowLeft" || (e.shiftKey && key === "Tab")) {
@@ -406,6 +405,11 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
         if (key === "Tab") {
           e.preventDefault();
+        }
+      },
+      onClick: (e: React.KeyboardEvent<HTMLElement>) => {
+        if (!columnIndex) {
+          rowFocus(e.currentTarget.parentElement as HTMLTableRowElement);
         }
       },
       onContextMenu: (e: ContextMenuEvent) => {

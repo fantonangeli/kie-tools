@@ -101,6 +101,10 @@
   margin: -1px -1px;
 }
 
+.expression-container .table-component table tbody td:first-child {
+  border: 1px solid var(--pf-global--palette--black-300);
+}
+
 .expression-container .table-component table tbody td:focus {
   z-index: 1;
 }

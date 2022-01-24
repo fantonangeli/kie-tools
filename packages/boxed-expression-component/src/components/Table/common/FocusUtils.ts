@@ -67,9 +67,13 @@ export const cellFocus = (cell: HTMLTableDataCellElement | null): void => {
     return;
   }
 
-  /* TODO: FocusUtils: ArrowNavigation with nested tables  */
+  if (!cell.cellIndex) {
+    rowFocus(<HTMLTableRowElement>cell.parentElement);
+  } else {
+    cell.focus();
+  }
 
-  cell.focus();
+  /* TODO: FocusUtils: ArrowNavigation with nested tables  */
 };
 
 /**
@@ -78,9 +82,7 @@ export const cellFocus = (cell: HTMLTableDataCellElement | null): void => {
  * @param cell the cell of the row to focus
  * @returns
  */
-export const rowFocus = (cell: HTMLElement): void => {
-  const row = cell.parentElement;
-
+export const rowFocus = (row: HTMLTableRowElement): void => {
   if (!row) {
     return;
   }
@@ -146,4 +148,34 @@ export const focusLowerCell = (currentEl: HTMLElement | null, rowIndex: number):
   const gotoRow = currBody?.rows[rowIndex + 1];
 
   cellFocus(<HTMLTableDataCellElement>gotoRow?.cells[currCell.cellIndex]);
+};
+
+/**
+ * Focus Upper Row of a react-table. Works from any element inside a row or a row itself.
+ *
+ * @param currentEl the crrent element
+ * @param rowIndex the current row index
+ * @returns
+ */
+export const focusUpperRow = (currentEl: HTMLElement | null, rowIndex: number): void => {
+  const currRow = <HTMLTableRowElement>currentEl;
+  const currBody = currRow.closest("tbody");
+  const gotoRow = currBody?.rows[rowIndex - 1];
+
+  rowFocus(<HTMLTableRowElement>gotoRow);
+};
+
+/**
+ * Focus Lower Row of a react-table. Works from any element inside a row or a row itself.
+ *
+ * @param currentEl the crrent element
+ * @param rowIndex the current row index
+ * @returns
+ */
+export const focusLowerRow = (currentEl: HTMLElement | null, rowIndex: number): void => {
+  const currRow = <HTMLTableRowElement>currentEl;
+  const currBody = currRow.closest("tbody");
+  const gotoRow = currBody?.rows[rowIndex + 1];
+
+  rowFocus(<HTMLTableRowElement>gotoRow);
 };

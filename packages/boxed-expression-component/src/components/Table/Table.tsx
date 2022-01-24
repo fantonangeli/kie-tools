@@ -41,6 +41,8 @@ import {
   focusLowerCell,
   rowFocus,
   cellFocus,
+  focusLowerRow,
+  focusUpperRow,
 } from "./common";
 import { EditableCell } from "./EditableCell";
 import "./Table.css";
@@ -335,12 +337,20 @@ export const Table: React.FunctionComponent<TableProps> = ({
       tabIndex: 0,
       onKeyDown: (e: React.KeyboardEvent<HTMLTableRowElement>) => {
         const key = e.key;
-        console.log("trProps");
 
-        if (key == "ArrowRight" && e.currentTarget === document.activeElement) {
-          cellFocus(e.currentTarget.cells[1]);
+        if (e.currentTarget === document.activeElement) {
+          if (key == "ArrowRight" || (!e.shiftKey && key === "Tab")) {
+            cellFocus(e.currentTarget.cells[1]);
+          } else if (key === "ArrowDown") {
+            focusLowerRow(e.currentTarget, rowIndex);
+          } else if (key === "ArrowUp") {
+            focusUpperRow(e.currentTarget, rowIndex);
+          }
+
+          if (key === "Tab") {
+            e.preventDefault();
+          }
         }
-        /* TODO: Table: implement row navigation */
         /* TODO: FocusUtils: row context menu when row is focused */
       },
       // onContextMenu: (e: ContextMenuEvent) => {
@@ -364,25 +374,38 @@ export const Table: React.FunctionComponent<TableProps> = ({
     []
   );
 
+  const tableInstance = useTable(
+    {
+      columns: tableColumns,
+      data: rows,
+      defaultColumn,
+      onCellUpdate,
+      onRowUpdate,
+    },
+    useBlockLayout,
+    useResizeColumns
+  );
+
   const tdProps = useCallback(
     (columnIndex: number, rowIndex: number) => ({
       tabIndex: 0,
+      /* TODO: on click first cell of a row -> focus row */
       onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
         const key = e.key;
-        if (key == "ArrowLeft") {
-          if (columnIndex <= 1) {
-            rowFocus(e.currentTarget);
-          } else {
-            focusPrevCell(e.currentTarget);
-          }
-        } else if (key == "ArrowRight") {
+        if (key == "ArrowLeft" || (e.shiftKey && key === "Tab")) {
+          focusPrevCell(e.currentTarget);
+        } else if (key == "ArrowRight" || (!e.shiftKey && key === "Tab")) {
           focusNextCell(e.currentTarget);
-        } else if (key == "ArrowUp") {
+        } else if (key === "ArrowUp") {
           focusUpperCell(e.currentTarget, rowIndex);
-        } else if (key == "ArrowDown") {
+        } else if (key === "ArrowDown") {
           focusLowerCell(e.currentTarget, rowIndex);
-        } else if (key == "Enter") {
+        } else if (key === "Enter") {
           focusTextArea(e.currentTarget.querySelector("textarea"));
+        }
+
+        if (key === "Tab") {
+          e.preventDefault();
         }
       },
       onContextMenu: (e: ContextMenuEvent) => {
@@ -402,19 +425,15 @@ export const Table: React.FunctionComponent<TableProps> = ({
         }
       },
     }),
-    [getColumnOperations, tableHandlerStateUpdate, contextMenuIsAvailable, tableColumns, rows, headerLevels]
-  );
-
-  const tableInstance = useTable(
-    {
-      columns: tableColumns,
-      data: rows,
-      defaultColumn,
-      onCellUpdate,
-      onRowUpdate,
-    },
-    useBlockLayout,
-    useResizeColumns
+    [
+      getColumnOperations,
+      tableHandlerStateUpdate,
+      contextMenuIsAvailable,
+      tableColumns,
+      rows,
+      headerLevels,
+      tableInstance,
+    ]
   );
 
   const onGetColumnKey = useCallback(

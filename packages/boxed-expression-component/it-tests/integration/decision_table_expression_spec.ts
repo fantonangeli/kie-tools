@@ -51,6 +51,14 @@ describe("Keyboard Navigation Tests", () => {
       cy.get("tbody tr:eq(2) td:eq(1)").should("not.be.focused");
     });
 
+    it("Navigate rows", () => {
+      cy.get(".editable-cell:eq(0)").type("{leftarrow}{leftarrow}{downarrow}");
+
+      cy.get("tbody tr:eq(1)").should("be.focused").type("{rightarrow}");
+
+      cy.get("tbody tr:eq(1) td:eq(1)").should("be.focused");
+    });
+
     it("Go against edges", () => {
       cy.get("tbody tr:eq(0) td:eq(1)")
         .click({ force: true })

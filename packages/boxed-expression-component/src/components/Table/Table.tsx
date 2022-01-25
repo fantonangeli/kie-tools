@@ -169,6 +169,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
   );
   const [lastSelectedColumn, setLastSelectedColumn] = useState({} as ColumnInstance);
   const [lastSelectedRowIndex, setLastSelectedRowIndex] = useState(-1);
+  const [isRowSelected, setIsRowSelected] = useState(false);
 
   const tableColumns = useMemo(
     () => generateNumberOfRowsColumn(controllerCell, columns),
@@ -276,7 +277,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
 
       const columnCanBeDeleted = columnIndex > 0 && atLeastTwoColumnsOfTheSameGroupType;
 
-      return columnIndex === 0
+      return columnIndex === 0 || isRowSelected
         ? []
         : [
             TableOperation.ColumnInsertLeft,
@@ -284,7 +285,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
             ...(columnCanBeDeleted ? [TableOperation.ColumnDelete] : []),
           ];
     },
-    [tableColumns]
+    [tableColumns, isRowSelected]
   );
 
   const thProps = useCallback(
@@ -341,37 +342,22 @@ export const Table: React.FunctionComponent<TableProps> = ({
         if (e.currentTarget === document.activeElement) {
           if (key == "ArrowRight" || (!e.shiftKey && key === "Tab")) {
             cellFocus(e.currentTarget.cells[1]);
+            setIsRowSelected(false);
           } else if (key === "ArrowDown") {
+            setIsRowSelected(true);
             focusLowerRow(e.currentTarget, rowIndex);
           } else if (key === "ArrowUp") {
             focusUpperRow(e.currentTarget, rowIndex);
+            setIsRowSelected(true);
           }
 
           if (key === "Tab") {
             e.preventDefault();
           }
         }
-        /* TODO: FocusUtils: row context menu when row is focused */
       },
-      // onContextMenu: (e: ContextMenuEvent) => {
-      //   const target = e.target as HTMLElement;
-      //   if (contextMenuIsAvailable(target)) {
-      //     e.preventDefault();
-      //     setTableHandlerAllowedOperations([
-      //       ...getColumnOperations(columnIndex),
-      //       TableOperation.RowInsertAbove,
-      //       TableOperation.RowInsertBelow,
-      //       ...(rows.length > 1 ? [TableOperation.RowDelete] : []),
-      //       TableOperation.RowClear,
-      //       TableOperation.RowDuplicate,
-      //     ]);
-      //     tableHandlerStateUpdate(target, getColumnsAtLastLevel(tableColumns, headerLevels)[columnIndex]);
-      //     setLastSelectedRowIndex(rowIndex);
-      //   }
-      // },
     }),
-    // [getColumnOperations, tableHandlerStateUpdate, contextMenuIsAvailable, tableColumns, rows, headerLevels]
-    []
+    [isRowSelected]
   );
 
   const tableInstance = useTable(
@@ -403,6 +389,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
           focusTextArea(e.currentTarget.querySelector("textarea"));
         }
 
+        setIsRowSelected(e.currentTarget.parentElement === document.activeElement);
+        console.log("isRowSelected", e.currentTarget.parentElement === document.activeElement);
+
         if (key === "Tab") {
           e.preventDefault();
         }
@@ -411,7 +400,9 @@ export const Table: React.FunctionComponent<TableProps> = ({
         if (!columnIndex) {
           rowFocus(e.currentTarget.parentElement as HTMLTableRowElement);
         }
+        setIsRowSelected(!columnIndex);
       },
+      /* TODO: FocusUtils: row context menu when row is focused */
       onContextMenu: (e: ContextMenuEvent) => {
         const target = e.target as HTMLElement;
         if (contextMenuIsAvailable(target)) {
@@ -427,6 +418,11 @@ export const Table: React.FunctionComponent<TableProps> = ({
           tableHandlerStateUpdate(target, getColumnsAtLastLevel(tableColumns, headerLevels)[columnIndex]);
           setLastSelectedRowIndex(rowIndex);
         }
+        //put back the focus to the row if it was selected before
+        console.log("isRowSelected", isRowSelected);
+        if (isRowSelected && rowIndex === lastSelectedRowIndex) {
+          target.closest("tr")?.focus();
+        }
       },
     }),
     [
@@ -437,6 +433,7 @@ export const Table: React.FunctionComponent<TableProps> = ({
       rows,
       headerLevels,
       tableInstance,
+      isRowSelected,
     ]
   );
 

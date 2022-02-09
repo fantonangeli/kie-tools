@@ -50,7 +50,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
   const [mode, setMode] = useState(READ_MODE);
   const [cellHeight, setCellHeight] = useState(CELL_LINE_HEIGHT * 3);
   const [preview, setPreview] = useState<string>("");
-  const textarea = useRef<HTMLTextAreaElement>(null);
+  const textarea = useRef<HTMLDivElement>(null);
   const [previousValue, setPreviousValue] = useState("");
   const feelInputRef = useRef<FeelInputRef>(null);
   const boxedExpression = useBoxedExpression();
@@ -74,6 +74,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
         onCellUpdate(rowIndex, columnId, newValue ?? value);
       }
 
+      // @ts-ignore
       focusTextArea(textarea.current);
     },
     [boxedExpression.boxedExpressionEditorGWTService, mode, columnId, onCellUpdate, rowIndex, value]
@@ -99,6 +100,7 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
       return;
     }
     setIsSelected(true);
+    // @ts-ignore
     focusTextArea(textarea.current);
   }, [mode]);
 
@@ -207,19 +209,29 @@ export function EditableCell({ value, rowIndex, columnId, onCellUpdate, readOnly
         className={cssClass()}
       >
         <span className="editable-cell-value" dangerouslySetInnerHTML={{ __html: preview }} />
-        <textarea
-          data-testid={"editable-cell-textarea"}
-          className="editable-cell-textarea"
-          ref={textarea}
-          tabIndex={-1}
-          value={textValue}
-          onChange={onTextAreaChange}
-          onBlur={onTextAreaBlur}
-          readOnly={readOnly}
-        />
+        {/* <textarea */}
+        {/*   data-testid={"editable-cell-textarea"} */}
+        {/*   className="editable-cell-textarea" */}
+        {/*   ref={textarea} */}
+        {/*   tabIndex={-1} */}
+        {/*   value={textValue} */}
+        {/*   onChange={onTextAreaChange} */}
+        {/*   onBlur={onTextAreaBlur} */}
+        {/*   readOnly={readOnly} */}
+        {/* /> */}
+        {/* <div */}
+        {/*   data-testid={"editable-cell-textarea"} */}
+        {/*   className="editable-cell-textarea" */}
+        {/*   ref={textarea} */}
+        {/*   tabIndex={-1} */}
+        {/*   onChange={onTextAreaChange} */}
+        {/*   onBlur={onTextAreaBlur} */}
+        {/* > */}
+        {/*   {textValue} */}
+        {/* </div> */}
         <FeelInput
           ref={feelInputRef}
-          enabled={mode === EDIT_MODE}
+          enabled={true}
           value={textValue}
           onKeyDown={onFeelKeyDown}
           onChange={onFeelChange}

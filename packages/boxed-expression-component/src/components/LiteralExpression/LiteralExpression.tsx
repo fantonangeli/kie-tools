@@ -115,37 +115,47 @@ export const LiteralExpression: React.FunctionComponent<LiteralExpressionProps> 
   }, [boxedExpressionEditorGWTService, literalExpression.id]);
 
   return (
-    <div className="literal-expression">
+    <table className="literal-expression">
       {!literalExpression.isHeadless && (
-        <div className="literal-expression-header" onClick={onHeaderClick}>
-          <Resizer
-            width={literalExpression.width ?? HEADER_WIDTH}
-            minWidth={HEADER_WIDTH}
-            onHorizontalResizeStop={onHorizontalResizeStop}
-          >
-            <EditExpressionMenu
-              selectedExpressionName={literalExpression.name ?? EXPRESSION_NAME}
-              selectedDataType={literalExpression.dataType ?? DataType.Undefined}
-              onExpressionUpdate={onExpressionUpdate}
-            >
-              <div className="expression-info">
-                <p className="expression-name pf-u-text-truncate">{literalExpression.name ?? EXPRESSION_NAME}</p>
-                <p className="expression-data-type pf-u-text-truncate">
-                  ({literalExpression.dataType ?? DataType.Undefined})
-                </p>
+        <thead>
+          <tr>
+            <th>
+              <div className="literal-expression-header" onClick={onHeaderClick} style={{ border: "1px" }}>
+                <Resizer
+                  width={literalExpression.width ?? HEADER_WIDTH}
+                  minWidth={HEADER_WIDTH}
+                  onHorizontalResizeStop={onHorizontalResizeStop}
+                >
+                  <EditExpressionMenu
+                    selectedExpressionName={literalExpression.name ?? EXPRESSION_NAME}
+                    selectedDataType={literalExpression.dataType ?? DataType.Undefined}
+                    onExpressionUpdate={onExpressionUpdate}
+                  >
+                    <div className="expression-info">
+                      <p className="expression-name pf-u-text-truncate">{literalExpression.name ?? EXPRESSION_NAME}</p>
+                      <p className="expression-data-type pf-u-text-truncate">
+                        ({literalExpression.dataType ?? DataType.Undefined})
+                      </p>
+                    </div>
+                  </EditExpressionMenu>
+                </Resizer>
               </div>
-            </EditExpressionMenu>
-          </Resizer>
-        </div>
+            </th>
+          </tr>
+        </thead>
       )}
-      <div className={`${literalExpression.id} literal-expression-body`} onClick={onBodyClick}>
-        <EditableCell
-          value={literalExpression.content ?? ""}
-          rowIndex={0}
-          columnId={literalExpression.id ?? "-"}
-          onCellUpdate={onCellUpdate}
-        />
-      </div>
-    </div>
+      <tbody>
+        <tr>
+          <td className={`${literalExpression.id} literal-expression-body`} onClick={onBodyClick}>
+            <EditableCell
+              value={literalExpression.content ?? ""}
+              rowIndex={0}
+              columnId={literalExpression.id ?? "-"}
+              onCellUpdate={onCellUpdate}
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
   );
 };

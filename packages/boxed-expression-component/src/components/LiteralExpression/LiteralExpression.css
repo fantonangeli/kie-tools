@@ -46,12 +46,9 @@
 }
 
 .literal-expression .literal-expression-header {
-  display: flex;
   justify-content: center;
-  flex-wrap: wrap;
-  position: relative;
   padding: 0.5em 0.1em 0.5em 0.5em;
-  border: 1px solid var(--pf-global--palette--black-300);
+  border: 1px solid var(--pf-global--palette--black-300) !important;
   background-color: #def3ff;
   color: black;
 }

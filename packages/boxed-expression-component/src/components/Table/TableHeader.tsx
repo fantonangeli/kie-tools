@@ -328,7 +328,7 @@ const RenderResizableHeaderCell = ({
   const isColspan = (column.columns?.length ?? 0) > 0 || false;
   const columnKey = getColumnKey(column);
   const isFocusable = /^(_\w{8}-(\w{4}-){3}\w{12}|parameters|functionDefinition)$/.test(columnKey);
-  const [isAnnotationCellEditMode, setIsAnnotationCellEditMode] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   const getCssClass = useCallback(() => {
     const cssClasses = [columnKey, "data-header-cell"];
@@ -345,9 +345,9 @@ const RenderResizableHeaderCell = ({
     }
     cssClasses.push(column.groupType || "");
     cssClasses.push(column.cssClasses || "");
-    cssClasses.push(isAnnotationCellEditMode ? "focused" : "");
+    cssClasses.push(isFocused ? "focused" : "");
     return cssClasses.join(" ");
-  }, [column, columnKey, isAnnotationCellEditMode, isColspan]);
+  }, [column, columnKey, isFocused, isColspan]);
 
   /**
    * Get the rowspan value.
@@ -375,7 +375,7 @@ const RenderResizableHeaderCell = ({
    * @param isReadMode true if is read mode, false otherwise
    */
   const onAnnotationCellToggle = useCallback((isReadMode: boolean) => {
-    setIsAnnotationCellEditMode(!isReadMode);
+    setIsFocused(!isReadMode);
   }, []);
 
   const cssClasses = getCssClass();
@@ -396,6 +396,8 @@ const RenderResizableHeaderCell = ({
         <div className="header-cell" data-ouia-component-type="expression-column-header">
           {column.dataType && editableHeader ? (
             <EditExpressionMenu
+              onPopoverHide={() => setIsFocused(false)}
+              onPopoverShow={() => setIsFocused(true)}
               title={getColumnLabel(column.groupType)}
               selectedExpressionName={column.label}
               selectedDataType={column.dataType}

@@ -33,6 +33,10 @@ export interface HitPolicySelectorProps {
   onHitPolicySelect: (hitPolicy: HitPolicy) => void;
   /** Callback invoked when built-in aggregator selection changes */
   onBuiltInAggregatorSelect: (builtInAggregator: BuiltinAggregation) => void;
+  /** Lifecycle function invoked when the popover begins to transition out.  */
+  onPopoverHide?: () => void;
+  /** Lifecycle function invoked when the popover begins to transition in.  */
+  onPopoverShow?: () => void;
 }
 
 const BUILT_IN_AGGREGATION_AVAILABILITY = [HitPolicy.Collect];
@@ -41,6 +45,8 @@ export const HitPolicySelector: React.FunctionComponent<HitPolicySelectorProps> 
   onHitPolicySelect,
   selectedBuiltInAggregator,
   selectedHitPolicy,
+  onPopoverShow,
+  onPopoverHide,
 }) => {
   const { i18n } = useBoxedExpressionEditorI18n();
   const boxedExpression = useBoxedExpression();
@@ -113,6 +119,8 @@ export const HitPolicySelector: React.FunctionComponent<HitPolicySelectorProps> 
       appendTo={boxedExpression.editorRef?.current ?? undefined}
       className="hit-policy-popover"
       hasAutoWidth
+      onHide={onPopoverShow}
+      onShow={onPopoverHide}
       body={
         <div className="hit-policy-container">
           <div className="hit-policy-section">

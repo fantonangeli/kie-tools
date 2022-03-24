@@ -31,6 +31,10 @@ export interface ContextEntryInfoProps {
   onContextEntryUpdate: (name: string, dataType: DataType) => void;
   /** Label used for the popover triggered when editing info section */
   editInfoPopoverLabel?: string;
+  /** Lifecycle function invoked when the popover begins to transition out.  */
+  onPopoverHide?: () => void;
+  /** Lifecycle function invoked when the popover begins to transition in.  */
+  onPopoverShow?: () => void;
 }
 
 export const ContextEntryInfo: React.FunctionComponent<ContextEntryInfoProps> = ({
@@ -39,6 +43,8 @@ export const ContextEntryInfo: React.FunctionComponent<ContextEntryInfoProps> = 
   dataType,
   onContextEntryUpdate,
   editInfoPopoverLabel,
+  onPopoverHide,
+  onPopoverShow,
 }) => {
   const onEntryNameOrDataTypeUpdate = useCallback(
     ({ name, dataType }) => {
@@ -68,6 +74,8 @@ export const ContextEntryInfo: React.FunctionComponent<ContextEntryInfoProps> = 
         selectedExpressionName={name}
         selectedDataType={dataType}
         onExpressionUpdate={onEntryNameOrDataTypeUpdate}
+        onPopoverHide={onPopoverHide}
+        onPopoverShow={onPopoverShow}
       >
         {renderEntryDefinition("with-popover-menu")}
       </EditExpressionMenu>

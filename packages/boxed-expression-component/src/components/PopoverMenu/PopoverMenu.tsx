@@ -53,6 +53,10 @@ export interface PopoverMenuProps {
    * Lifecycle function invoked when the popover has fully transitioned out, called when the user press "Esc" key.
    */
   onCancel?: (event?: MouseEvent | KeyboardEvent) => void;
+  /**
+   * Lifecycle function invoked when the popover begins to transition in.
+   */
+  onShow?: () => void;
 }
 
 export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
@@ -66,6 +70,7 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
   minWidth,
   onHide = () => {},
   onCancel = () => {},
+  onShow = () => {},
 }: PopoverMenuProps) => {
   const { setIsContextMenuOpen } = useBoxedExpression();
   const [isVisible] = useState(false);
@@ -112,6 +117,7 @@ export const PopoverMenu: React.FunctionComponent<PopoverMenuProps> = ({
       reference={arrowPlacement}
       appendTo={appendTo}
       onHidden={onHidden}
+      onShow={onShow}
       onShown={onShown}
       headerContent={
         <div className="selector-menu-title" data-ouia-component-id="expression-popover-menu-title">

@@ -44,6 +44,10 @@ export interface EditExpressionMenuProps {
   selectedExpressionName: string;
   /** Function to be called when the expression gets updated, passing the most updated version of it */
   onExpressionUpdate: (expression: ExpressionProps) => void;
+  /** Lifecycle function invoked when the popover begins to transition out.  */
+  onPopoverHide?: () => void;
+  /** Lifecycle function invoked when the popover begins to transition in.  */
+  onPopoverShow?: () => void;
 }
 
 export const EXPRESSION_NAME = "Expression Name";
@@ -58,6 +62,8 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
   selectedDataType = DataType.Undefined,
   selectedExpressionName,
   onExpressionUpdate,
+  onPopoverHide,
+  onPopoverShow,
 }: EditExpressionMenuProps) => {
   const boxedExpression = useBoxedExpression();
   const { i18n } = useBoxedExpressionEditorI18n();
@@ -96,7 +102,8 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
       name: expressionName,
       dataType: dataType,
     });
-  }, [boxedExpression.boxedExpressionEditorGWTService, expressionName, onExpressionUpdate, dataType]);
+    onPopoverHide?.();
+  }, [boxedExpression.boxedExpressionEditorGWTService, expressionName, onExpressionUpdate, dataType, onPopoverHide]);
 
   const onCancel = useCallback(
     (_event: MouseEvent | KeyboardEvent) => {
@@ -106,6 +113,8 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
     [selectedExpressionName, selectedDataType]
   );
 
+  const onShow = useCallback(() => onPopoverShow?.(), [onPopoverShow]);
+
   return (
     <PopoverMenu
       title={title}
@@ -113,6 +122,7 @@ export const EditExpressionMenu: React.FunctionComponent<EditExpressionMenuProps
       appendTo={appendTo}
       onHide={onHide}
       onCancel={onCancel}
+      onShow={onShow}
       body={
         <div className="edit-expression-menu">
           <div className="expression-name">

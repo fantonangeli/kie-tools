@@ -221,8 +221,11 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
     return contextExpression.isHeadless ? TableHeaderVisibility.None : TableHeaderVisibility.SecondToLastLevel;
   }, [contextExpression.isHeadless]);
 
-  const defaultCell = useMemo(
-    () => ({ entryInfo: getContextEntryInfoCell(i18n.editContextEntry), entryExpression: ContextEntryExpressionCell }),
+  const defaultCell = useCallback(
+    (onPopoverShow = () => {}, onPopoverHide = () => {}) => ({
+      entryInfo: getContextEntryInfoCell(i18n.editContextEntry, onPopoverShow, onPopoverHide),
+      entryExpression: ContextEntryExpressionCell,
+    }),
     [i18n.editContextEntry]
   );
 
@@ -262,7 +265,7 @@ export const ContextExpression: React.FunctionComponent<ContextProps> = (context
         tableId={contextExpression.id}
         headerLevels={1}
         headerVisibility={getHeaderVisibility}
-        defaultCell={defaultCell}
+        defaultCell={defaultCell()}
         columns={columns}
         rows={rows as DataRecord[]}
         onColumnsUpdate={onColumnsUpdate}

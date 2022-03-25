@@ -26,12 +26,13 @@ export interface ContextEntryInfoCellProps extends CellProps {
   onRowUpdate: (rowIndex: number, updatedRow: DataRecord) => void;
   editInfoPopoverLabel?: string;
   /** Lifecycle function invoked when the popover begins to transition out.  */
-  onPopoverHide?: () => void;
+  onPopoverHide?: (rowIndex: number, columnId: string) => void;
   /** Lifecycle function invoked when the popover begins to transition in.  */
-  onPopoverShow?: () => void;
+  onPopoverShow?: (rowIndex: number, columnId: string) => void;
 }
 
 export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellProps> = ({
+  columnId,
   data,
   rowIndex,
   onRowUpdate,
@@ -67,8 +68,11 @@ export const ContextEntryInfoCell: React.FunctionComponent<ContextEntryInfoCellP
         dataType={entryInfo.dataType}
         onContextEntryUpdate={onContextEntryUpdate}
         editInfoPopoverLabel={editInfoPopoverLabel}
-        onPopoverHide={onPopoverHide}
-        onPopoverShow={onPopoverShow}
+        onPopoverHide={() => onPopoverHide?.(rowIndex, columnId)}
+        onPopoverShow={() => {
+          console.log(rowIndex, columnId);
+          onPopoverShow?.(rowIndex, columnId);
+        }}
       />
     </div>
   );

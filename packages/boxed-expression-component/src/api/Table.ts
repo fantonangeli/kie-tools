@@ -48,6 +48,9 @@ export interface TableProps {
   defaultCell?: {
     [columnName: string]: React.FunctionComponent<CellProps>;
   };
+  defaultCell2?: {
+    [columnName: string]: (onPopoverShow: () => void, onPopoverHide: () => void) => React.FunctionComponent<CellProps>;
+  };
   /** Table's columns */
   columns: ReactTableColumn[];
   /** Table's cells */
@@ -145,8 +148,4 @@ export interface CellProps {
   rowIndex: number;
   /** Cell's column properties */
   columnId: string;
-  /** Lifecycle function invoked when the popover begins to transition out.  */
-  onPopoverHide?: () => void;
-  /** Lifecycle function invoked when the popover begins to transition in.  */
-  onPopoverShow?: () => void;
 }

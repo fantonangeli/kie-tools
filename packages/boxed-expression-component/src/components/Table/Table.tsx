@@ -313,7 +313,12 @@ export const Table: React.FunctionComponent<TableProps> = ({
           return cellRef.value;
         } else {
           if (defaultCell) {
-            return defaultCell[column.id]({ ...cellRef, rowIndex: cellRef.row.index, columnId: cellRef.column.id });
+            return defaultCell[column.id]({
+              ...cellRef,
+              rowIndex: cellRef.row.index,
+              columnId: cellRef.column.id,
+              className: "tcell",
+            });
           }
           return (
             <EditableCell

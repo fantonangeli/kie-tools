@@ -40,6 +40,7 @@ import {
   focusPrevCell,
   focusUpperCell,
   getParentCell,
+  paste,
   pasteOnTable,
   PASTE_OPERATION,
 } from "./common";
@@ -421,6 +422,8 @@ export const Table: React.FunctionComponent<TableProps> = ({
           e.preventDefault();
         }
 
+        console.log("e", e);
+
         if (key === "ArrowLeft" || (key === "Tab" && e.shiftKey)) {
           focusPrevCell(e.currentTarget, rowSpan, key === "ArrowLeft");
         } else if (key === "ArrowRight" || (key === "Tab" && !e.shiftKey)) {
@@ -431,8 +434,13 @@ export const Table: React.FunctionComponent<TableProps> = ({
           focusLowerCell(e.currentTarget);
         } else if (key === "Escape") {
           focusParentCell(e.currentTarget);
+        } else if (key === "v" && e.ctrlKey && isFiredFromThis) {
+          debugger;
+          // const newValue: string = e.target.value.trim("") ?? "";
+          // const isPastedValue = newValue.includes("\t") || newValue.includes("\n");
+          // paste()
         } else if (!boxedExpression.isContextMenuOpen && isFiredFromThis && !isModKey && !/^F\w+$/.test(e.key)) {
-          return focusInsideCell(e.currentTarget, key !== "Enter");
+          focusInsideCell(e.currentTarget, key !== "Enter");
         }
       },
     [boxedExpression.isContextMenuOpen, enableKeyboarNavigation]

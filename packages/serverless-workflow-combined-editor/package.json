@@ -13,10 +13,11 @@
     "url": "https://github.com/kiegroup/kie-tools.git"
   },
   "scripts": {
+    "cleanup-wrong-nohoisted-dependencies": "rimraf ./node_modules/monaco-yaml/node_modules",
     "lint": "yarn run run-script-if --bool \"$(build-env global.build.lint)\" --then \"yarn eslint ./src --ext .ts,.tsx\"",
     "test": "yarn run run-script-if --bool \"$(build-env global.build.test)\" --then \"jest --silent --verbose --passWithNoTests\"",
-    "build:dev": "rimraf dist && tsc -p tsconfig.json",
-    "build:prod": "yarn lint && rimraf dist && tsc -p tsconfig.prod.json && yarn test",
+    "build:dev": "yarn cleanup-wrong-nohoisted-dependencies && rimraf dist && tsc -p tsconfig.json",
+    "build:prod": "yarn cleanup-wrong-nohoisted-dependencies && yarn lint && rimraf dist && tsc -p tsconfig.prod.json && yarn test",
     "test:clearCache": "jest --clearCache",
     "test:watch": "jest --watch",
     "start": "webpack serve -c ./dev-webapp/webpack.config.js --host 0.0.0.0 --env dev",

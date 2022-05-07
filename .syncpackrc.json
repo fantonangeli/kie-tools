@@ -2,7 +2,11 @@
   "versionGroups": [
     {
       "dependencies": ["monaco-editor"],
-      "packages": ["@kie-tools/serverless-workflow-editor"]
+      "packages": [
+        "@kie-tools/serverless-workflow-text-editor",
+        "@kie-tools/serverless-workflow-combined-editor",
+        "chrome-extension-serverless-workflow-editor"
+      ]
     }
   ]
 }

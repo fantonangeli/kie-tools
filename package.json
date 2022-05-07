@@ -15,8 +15,6 @@
       "@kie-tools/serverless-workflow-text-editor/monaco-yaml",
       "@kie-tools/serverless-workflow-text-editor/monaco-yaml/**",
       "@kie-tools/serverless-workflow-combined-editor",
-      "@kie-tools/serverless-workflow-combined-editor/monaco-editor",
-      "@kie-tools/serverless-workflow-combined-editor/monaco-editor/**",
       "@kie-tools/serverless-workflow-combined-editor/monaco-yaml",
       "@kie-tools/serverless-workflow-combined-editor/monaco-yaml/**",
       "chrome-extension-serverless-workflow-editor",

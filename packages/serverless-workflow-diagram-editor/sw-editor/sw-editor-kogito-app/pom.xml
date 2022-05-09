@@ -374,7 +374,9 @@
           <draftCompile>false</draftCompile>
           <strict>true</strict>
           <!-- Do NOT change the style below, it must be PRETTY, otherwise JSON.stringify complains about circular references when having switch states. -->
-          <style>PRETTY</style>
+          <!-- <style>PRETTY</style> -->
+          <!-- TODO: Moving style back to `OBFUSCATED`, otherwise VS Code can't open the editor properly -->
+          <style>OBFUSCATED</style>
           <deploy>${project.build.directory}/gwt-symbols-deploy</deploy>
           <hostedWebapp>src/main/webapp</hostedWebapp>
           <runTarget>test.html</runTarget>

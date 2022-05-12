@@ -97,6 +97,11 @@ module.exports = async (env) => {
         ],
       }),
     ],
+    resolve: {
+      alias: {
+        react: path.resolve(__dirname, "./node_modules/react"),
+      },
+    },
     module: {
       rules: [...patternflyBase.webpackModuleRules],
     },

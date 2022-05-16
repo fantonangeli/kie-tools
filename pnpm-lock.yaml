@@ -632,6 +632,7 @@ importers:
       "@kie-tools/serverless-workflow-combined-editor": 0.0.0
       "@kie-tools/serverless-workflow-diagram-editor": 0.0.0
       "@kie-tools/serverless-workflow-diagram-editor-envelope": 0.0.0
+      "@kie-tools/serverless-workflow-mermaid-viewer": 0.0.0
       "@kie-tools/serverless-workflow-text-editor": 0.0.0
       monaco-editor: ^0.33.0
       monaco-editor-webpack-plugin: ^7.0.1
@@ -648,6 +649,7 @@ importers:
       "@kie-tools/serverless-workflow-combined-editor": link:../serverless-workflow-combined-editor
       "@kie-tools/serverless-workflow-diagram-editor": link:../serverless-workflow-diagram-editor
       "@kie-tools/serverless-workflow-diagram-editor-envelope": link:../serverless-workflow-diagram-editor-envelope
+      "@kie-tools/serverless-workflow-mermaid-viewer": link:../serverless-workflow-mermaid-viewer
       "@kie-tools/serverless-workflow-text-editor": link:../serverless-workflow-text-editor
       monaco-editor: 0.33.0
       monaco-editor-webpack-plugin: 7.0.1_xaucyy2rqq33fyrllhuadbirwm
@@ -1542,6 +1544,7 @@ importers:
       "@kie-tools/serverless-workflow-diagram-editor": 0.0.0
       "@kie-tools/serverless-workflow-diagram-editor-envelope": 0.0.0
       "@kie-tools/serverless-workflow-language-service": 0.0.0
+      "@kie-tools/serverless-workflow-mermaid-viewer": 0.0.0
       "@kie-tools/serverless-workflow-service-catalog": 0.0.0
       "@kie-tools/serverless-workflow-text-editor": 0.0.0
       "@patternfly/react-core": ^4.157.3
@@ -1566,6 +1569,7 @@ importers:
       "@kie-tools/serverless-workflow-diagram-editor": link:../serverless-workflow-diagram-editor
       "@kie-tools/serverless-workflow-diagram-editor-envelope": link:../serverless-workflow-diagram-editor-envelope
       "@kie-tools/serverless-workflow-language-service": link:../serverless-workflow-language-service
+      "@kie-tools/serverless-workflow-mermaid-viewer": link:../serverless-workflow-mermaid-viewer
       "@kie-tools/serverless-workflow-service-catalog": link:../serverless-workflow-service-catalog
       "@kie-tools/serverless-workflow-text-editor": link:../serverless-workflow-text-editor
       "@patternfly/react-core": registry.npmjs.org/@patternfly/react-core/4.168.8_sfoxds7t5ydpegc3knd667wn6m
@@ -1601,6 +1605,43 @@ importers:
       jsonc-parser: 3.0.0
       vscode-languageserver-textdocument: 1.0.4
       vscode-languageserver-types: 3.16.0
+
+  packages/serverless-workflow-mermaid-viewer:
+    specifiers:
+      "@kie-tools-core/editor": 0.0.0
+      "@kie-tools-core/envelope-bus": 0.0.0
+      "@kie-tools-core/guided-tour": 0.0.0
+      "@kie-tools-core/notifications": 0.0.0
+      "@kie-tools-core/operating-system": 0.0.0
+      "@kie-tools-core/patternfly-base": 0.0.0
+      "@kie-tools-core/run-script-if": 0.0.0
+      "@kie-tools-core/webpack-base": 0.0.0
+      "@kie-tools-core/workspace": 0.0.0
+      "@kie-tools/build-env": 0.0.0
+      "@patternfly/react-core": ^4.157.3
+      "@patternfly/react-icons": ^4.11.17
+      "@types/mermaid": ^8.2.9
+      mermaid: ^9.0.0
+      react: ^17.0.2
+      react-dom: ^17.0.2
+    dependencies:
+      "@kie-tools-core/editor": link:../editor
+      "@kie-tools-core/envelope-bus": link:../envelope-bus
+      "@kie-tools-core/guided-tour": link:../guided-tour
+      "@kie-tools-core/notifications": link:../notifications
+      "@kie-tools-core/operating-system": link:../operating-system
+      "@kie-tools-core/patternfly-base": link:../patternfly-base
+      "@kie-tools-core/workspace": link:../workspace
+      "@patternfly/react-core": registry.npmjs.org/@patternfly/react-core/4.168.8_sfoxds7t5ydpegc3knd667wn6m
+      "@patternfly/react-icons": registry.npmjs.org/@patternfly/react-icons/4.19.8_sfoxds7t5ydpegc3knd667wn6m
+      mermaid: registry.npmjs.org/mermaid/9.1.1
+      react: registry.npmjs.org/react/17.0.2
+      react-dom: registry.npmjs.org/react-dom/17.0.2_react@17.0.2
+    devDependencies:
+      "@kie-tools-core/run-script-if": link:../run-script-if
+      "@kie-tools-core/webpack-base": link:../webpack-base
+      "@kie-tools/build-env": link:../build-env
+      "@types/mermaid": registry.npmjs.org/@types/mermaid/8.2.9
 
   packages/serverless-workflow-service-catalog:
     specifiers:
@@ -2060,12 +2101,15 @@ importers:
       "@kie-tools/serverless-workflow-diagram-editor": 0.0.0
       "@kie-tools/serverless-workflow-diagram-editor-envelope": 0.0.0
       "@kie-tools/serverless-workflow-language-service": 0.0.0
+      "@kie-tools/serverless-workflow-mermaid-viewer": 0.0.0
       "@kie-tools/serverless-workflow-service-catalog": 0.0.0
       axios: ^0.27.2
       monaco-editor: ^0.33.0
       monaco-editor-webpack-plugin: ^7.0.1
       monaco-yaml: ^3.2.1
       openapi-types: ^7.0.1
+      react: ^17.0.2
+      react-dom: ^17.0.2
       vscode-languageserver-textdocument: ^1.0.4
       vscode-languageserver-types: ^3.16.0
       yaml: ^2.0.1
@@ -2082,6 +2126,7 @@ importers:
       "@kie-tools-core/workspace": link:../workspace
       "@kie-tools/serverless-workflow-diagram-editor-envelope": link:../serverless-workflow-diagram-editor-envelope
       "@kie-tools/serverless-workflow-language-service": link:../serverless-workflow-language-service
+      "@kie-tools/serverless-workflow-mermaid-viewer": link:../serverless-workflow-mermaid-viewer
       "@kie-tools/serverless-workflow-service-catalog": link:../serverless-workflow-service-catalog
       axios: 0.27.2
       monaco-editor: 0.33.0

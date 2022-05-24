@@ -16,6 +16,8 @@
 
 import { EditorFactory, EditorInitArgs, KogitoEditorEnvelopeContextType } from "@kie-tools-core/editor/dist/api";
 import { GwtEditorWrapperFactory } from "@kie-tools/kie-bc-editors/dist/common";
+import { ServerlessWorkflowCombinedEditorChannelApi } from "../../../chrome-extension-serverless-workflow-editor/node_modules/@kie-tools/serverless-workflow-combined-editor/dist/api";
+import { EnvelopeServer } from "../../../editor/node_modules/@kie-tools-core/envelope-bus/src/channel";
 import { getServerlessWorkflowLanguageData, ServerlessWorkflowDiagramEditorChannelApi } from "../api";
 import {
   ServerlessWorkflowDiagramEditor,
@@ -39,7 +41,8 @@ export class ServerlessWorkflowDiagramEditorFactory
     initArgs: EditorInitArgs
   ): Promise<ServerlessWorkflowDiagramEditor> {
     window.onNodeClicked = (nodeName: string) => {
-      debugger;
+      /* TODO: ServerlessWorkflowDiagramEditorFactory: replicate this to VSCode */
+      ctx.channelApi.requests.kogitoSwfServiceCatalog_nodeClicked(nodeName);
     };
     const languageData = getServerlessWorkflowLanguageData(initArgs.resourcesPathPrefix);
     const factory = new GwtEditorWrapperFactory<ServerlessWorkflowDiagramEditor>(

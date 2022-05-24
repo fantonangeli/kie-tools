@@ -16,4 +16,6 @@
 
 import { KogitoEditorChannelApi } from "@kie-tools-core/editor/dist/api";
 
-export interface ServerlessWorkflowCombinedEditorChannelApi extends KogitoEditorChannelApi {}
+export interface ServerlessWorkflowCombinedEditorChannelApi extends KogitoEditorChannelApi {
+  kogitoSwfCombinedEditor_onNodeClicked(nodeName: string): void;
+}

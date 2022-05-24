@@ -8,7 +8,9 @@ import jsinterop.annotations.JsType;
 public class DiagramWindow {
     @JsOverlay
     public static void onNodeClick(String stateName) {
-        onNodeClicked(stateName);
+        if (stateName!=null){
+            onNodeClicked(stateName);
+        }
     }
 
     public static native void onNodeClicked(String stateName);

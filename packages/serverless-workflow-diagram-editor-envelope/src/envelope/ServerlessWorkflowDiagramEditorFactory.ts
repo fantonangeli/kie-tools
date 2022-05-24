@@ -23,28 +23,11 @@ import {
 } from "./ServerlessWorkflowDiagramEditor";
 
 export interface CustomWindow {
-  envelope: {
-    // javaCodeCompletionService: JavaCodeCompletionApi;
-    diagramEvents: {};
-  };
+  onNodeClicked: (nodeName: string) => void;
+  envelope: {};
 }
 
 declare let window: CustomWindow;
-
-// class JavaCodeCompletionService implements JavaCodeCompletionApi {
-//   constructor(
-//     private readonly envelopeContext: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>
-//   ) {}
-//   getAccessors(fqcn: string, query: string) {
-//     return this.envelopeContext.channelApi.requests.kogitoJavaCodeCompletion__getAccessors(fqcn, query);
-//   }
-//   getClasses(query: string) {
-//     return this.envelopeContext.channelApi.requests.kogitoJavaCodeCompletion__getClasses(query);
-//   }
-//   isLanguageServerAvailable() {
-//     return this.envelopeContext.channelApi.requests.kogitoJavaCodeCompletion__isLanguageServerAvailable();
-//   }
-// }
 
 export class ServerlessWorkflowDiagramEditorFactory
   implements EditorFactory<ServerlessWorkflowDiagramEditor, ServerlessWorkflowDiagramEditorChannelApi>
@@ -55,16 +38,8 @@ export class ServerlessWorkflowDiagramEditorFactory
     ctx: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>,
     initArgs: EditorInitArgs
   ): Promise<ServerlessWorkflowDiagramEditor> {
-    window.envelope = {
-      ...(window.envelope ?? {}),
-      ...{
-        diagramEvents: {
-          events: () => {
-            debugger;
-          },
-        },
-      },
-      // ...{ javaCodeCompletionService: new JavaCodeCompletionService(ctx) },
+    window.onNodeClicked = (nodeName: string) => {
+      debugger;
     };
     const languageData = getServerlessWorkflowLanguageData(initArgs.resourcesPathPrefix);
     const factory = new GwtEditorWrapperFactory<ServerlessWorkflowDiagramEditor>(

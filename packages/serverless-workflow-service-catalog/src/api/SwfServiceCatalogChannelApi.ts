@@ -28,5 +28,5 @@ export interface SwfServiceCatalogChannelApi {
     documentUri: string;
   }): void;
   kogitoSwfServiceCatalog_setupServiceRegistryUrl(): void;
-  kogitoSwfServiceCatalog_nodeClicked(nodeName: string): Promise<void>;
+  kogitoSwfServiceCatalog_nodeClicked(nodeName: string): void;
 }

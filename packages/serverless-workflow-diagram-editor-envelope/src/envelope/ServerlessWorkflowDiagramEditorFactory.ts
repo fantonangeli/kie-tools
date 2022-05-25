@@ -41,8 +41,11 @@ export class ServerlessWorkflowDiagramEditorFactory
     initArgs: EditorInitArgs
   ): Promise<ServerlessWorkflowDiagramEditor> {
     window.onNodeClicked = (nodeName: string) => {
+      if (!nodeName) {
+        return;
+      }
       /* TODO: ServerlessWorkflowDiagramEditorFactory: replicate this to VSCode */
-      ctx.channelApi.requests.kogitoSwfServiceCatalog_nodeClicked(nodeName);
+      ctx.channelApi.notifications.kogitoSwfServiceCatalog_nodeClicked.send(nodeName);
     };
     const languageData = getServerlessWorkflowLanguageData(initArgs.resourcesPathPrefix);
     const factory = new GwtEditorWrapperFactory<ServerlessWorkflowDiagramEditor>(

@@ -22,6 +22,22 @@ import {
   ServerlessWorkflowDiagramEditorImpl,
 } from "./ServerlessWorkflowDiagramEditor";
 
+export interface CustomWindow {
+  envelope: {};
+  onNodeClicked: (nodeName: string) => void;
+}
+
+declare let window: CustomWindow;
+
+export const onNodeClicked =
+  (ctx: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>) => (nodeName: string) => {
+    if (!nodeName) {
+      return;
+    }
+    /* TODO: ServerlessWorkflowDiagramEditorFactory: replicate this to VSCode */
+    ctx.channelApi.notifications.kogitoSwfServiceCatalog_nodeClicked.send(nodeName);
+  };
+
 export class ServerlessWorkflowDiagramEditorFactory
   implements EditorFactory<ServerlessWorkflowDiagramEditor, ServerlessWorkflowDiagramEditorChannelApi>
 {
@@ -31,6 +47,7 @@ export class ServerlessWorkflowDiagramEditorFactory
     ctx: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>,
     initArgs: EditorInitArgs
   ): Promise<ServerlessWorkflowDiagramEditor> {
+    window.onNodeClicked = onNodeClicked(ctx);
     const languageData = getServerlessWorkflowLanguageData(initArgs.resourcesPathPrefix);
     const factory = new GwtEditorWrapperFactory<ServerlessWorkflowDiagramEditor>(
       languageData,

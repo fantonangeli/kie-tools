@@ -68,6 +68,6 @@ export class SwfServiceCatalogChannelApiImpl implements SwfServiceCatalogChannel
   }
 
   public kogitoSwfServiceCatalog_nodeClicked(nodeName: string): void {
-    /* TODO: SwfServiceCatalogChannelApiImpl: to be implemented */
+    console.log("SwfServiceCatalogChannelApiImpl.kogitoSwfServiceCatalog_nodeClicked", nodeName);
   }
 }

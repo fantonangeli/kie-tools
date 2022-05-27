@@ -18,6 +18,7 @@ import * as vscode from "vscode";
 import { askForServiceRegistryUrl } from "./rhhccServiceRegistry";
 import { CONFIGURATION_SECTIONS, SwfVsCodeExtensionConfiguration } from "../configuration";
 import { COMMAND_IDS } from "../commandIds";
+import { findPositionByStateName } from "../utils";
 
 export function setupServiceRegistryIntegrationCommands(args: {
   context: vscode.ExtensionContext;
@@ -48,6 +49,39 @@ export function setupServiceRegistryIntegrationCommands(args: {
     vscode.commands.registerCommand(COMMAND_IDS.removeServiceRegistryUrl, () => {
       vscode.workspace.getConfiguration().update(CONFIGURATION_SECTIONS.serviceRegistryUrl, "");
       vscode.window.setStatusBarMessage("Serverless Workflow: Service Registry URL removed.", 3000);
+    })
+  );
+
+  args.context.subscriptions.push(
+    vscode.commands.registerCommand(COMMAND_IDS.moveCursorToNode, (nodeName: string) => {
+      const textEditor = vscode.window.visibleTextEditors[0] || null;
+
+      console.log("called moveCursorToNode");
+
+      if (!textEditor || vscode.window.visibleTextEditors.length > 1) {
+        console.debug("TextEditor not found");
+        return;
+      }
+
+      const targetPosition = findPositionByStateName(textEditor.document.getText(), nodeName);
+
+      if (targetPosition === null) {
+        return;
+      }
+
+      /* TODO: serviceRegistryCommands: activate the left side of the window*/
+      const targetLocation = new vscode.Location(
+        textEditor.document.uri,
+        new vscode.Position(targetPosition.line, targetPosition.character)
+      );
+
+      vscode.commands.executeCommand(
+        "editor.action.goToLocations",
+        textEditor.document.uri,
+        textEditor.selection.active,
+        [targetLocation],
+        "goto"
+      );
     })
   );
 }

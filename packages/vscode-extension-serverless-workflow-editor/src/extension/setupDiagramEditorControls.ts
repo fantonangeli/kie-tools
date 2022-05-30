@@ -22,7 +22,7 @@ import {
 } from "./configuration";
 import { COMMAND_IDS } from "./commandIds";
 import { KogitoEditorStore } from "@kie-tools-core/vscode-extension";
-import { findPositionByStateName } from "./utils";
+import { findPositionByStateName } from "@kie-tools/serverless-workflow-language-service/dist/utils";
 
 function isSwf(textDocument: vscode.TextDocument) {
   return /^.*\.sw\.(json|yml|yaml)$/.test(textDocument.fileName);

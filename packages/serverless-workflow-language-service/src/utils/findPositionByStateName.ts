@@ -19,13 +19,30 @@ export type Position = {
   character: number;
 };
 
-export const findPositionByStateName = (fullText: string, stateName: string): Position | null => {
-  const fullTextSplit = fullText.split("\n");
-  const nameRegExp = new RegExp(`"name"\\s*:\\s*"${stateName}"`);
+/**
+ * Find position (row number) of a node in a JSON by state name.
+ *
+ * @param fullText the full text where to search
+ * @param stateName the name of the node
+ * @param fileType the current file type
+ * @returns the position of the node, null if not found
+ */
+export const findPositionByStateName = (
+  fullText: string,
+  stateName: string,
+  fileType: "JSON" | "YAML" = "JSON"
+): Position | null => {
+  if (!fullText || !stateName) {
+    return null;
+  }
 
-  /* TODO: utils: make findPositionByStateName work with both ' and " quotes */
-  /* TODO: utils: do the search after 'states' keyword */
-  /* TODO: utils: write tests */
+  const fullTextSplit = fullText.split("\n");
+  let nameRegExp = new RegExp(`"name"\\s*:\\s*"${stateName}"`);
+
+  if (fileType === "YAML") {
+    nameRegExp = new RegExp(`name\\s*:\\s*${stateName}`);
+  }
+
   for (let lineNum = 0, end = fullTextSplit.length; lineNum < end; lineNum++) {
     const line = fullTextSplit[lineNum];
 

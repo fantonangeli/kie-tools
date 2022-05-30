@@ -1,0 +1,91 @@
+/*
+ * Copyright 2022 Red Hat, Inc. and/or its affiliates.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { findPositionByStateName } from "@kie-tools/serverless-workflow-language-service/dist/utils";
+
+const mockJson = `{
+  "id":"helloworld",
+  "version":"1.0",
+  "specVersion":"0.8",
+  "name":"Hello World Workflow",
+  "start":"Hello State",
+  "states": [
+    {
+      "name": "Hello State",
+      "type": "inject",
+      "data": {
+        "result": "Hello World!"
+      },
+      "end": true
+    },
+    {
+      "name": "State with \"quotes\" inside",
+      "type": "inject",
+      "data": {
+        "result": "Hello World!"
+      },
+      "end": true
+    }
+  ]
+}`;
+
+const mockYaml = `
+  ---
+  id: helloworld
+  version: '1.0'
+  specVersion: '0.8'
+  name: Hello World Workflow
+  start: Hello State
+  states:
+  - name: Hello State
+    type: inject
+    data:
+      result: Hello World!
+    end: true
+  - name: State with "quotes" inside
+    type: inject
+    data:
+      result: Hello World!
+    end: true
+`;
+
+describe("findPositionByStateName", () => {
+  it("should return null with wrong inputs", () => {
+    // @ts-ignore
+    expect(findPositionByStateName(null, null)).toBe(null);
+    // @ts-ignore
+    expect(findPositionByStateName()).toBe(null);
+    expect(findPositionByStateName("", "")).toBe(null);
+    expect(findPositionByStateName("", "test")).toBe(null);
+    expect(findPositionByStateName("{ fakeJson: true }", "")).toBe(null);
+  });
+
+  it.each([
+    ["Hello State", { line: 8, character: 6 }],
+    ['State with "quotes" inside', { line: 16, character: 6 }],
+    ["Not present", null],
+  ])('using the mock JSON, searching: "%s"', (stateName, position) => {
+    expect(findPositionByStateName(mockJson, stateName, "JSON")).toStrictEqual(position);
+  });
+
+  it.each([
+    ["Hello State", { line: 8, character: 3 }],
+    ['State with "quotes" inside', { line: 13, character: 3 }],
+    ["Not present", null],
+  ])('using the mock YAML, searching: "%s"', (stateName, position) => {
+    expect(findPositionByStateName(mockYaml, stateName, "YAML")).toStrictEqual(position);
+  });
+});

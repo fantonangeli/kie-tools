@@ -22,6 +22,7 @@ import {
 } from "./configuration";
 import { COMMAND_IDS } from "./commandIds";
 import { KogitoEditorStore } from "@kie-tools-core/vscode-extension";
+import { findPositionByStateName } from "./utils";
 
 function isSwf(textDocument: vscode.TextDocument) {
   return /^.*\.sw\.(json|yml|yaml)$/.test(textDocument.fileName);
@@ -113,6 +114,43 @@ export async function setupDiagramEditorControls(args: {
         preserveFocus: false,
         background: false,
       });
+    })
+  );
+
+  args.context.subscriptions.push(
+    vscode.commands.registerCommand(COMMAND_IDS.moveCursorToNode, async (nodeName: string) => {
+      const textEditor = vscode.window.visibleTextEditors[0] || null;
+
+      if (!textEditor || vscode.window.visibleTextEditors.length > 1) {
+        console.debug("TextEditor not found");
+        return;
+      }
+
+      const resourceUri = textEditor.document.uri;
+      const targetPosition = findPositionByStateName(textEditor.document.getText(), nodeName);
+
+      if (targetPosition === null) {
+        return;
+      }
+
+      await vscode.commands.executeCommand("vscode.open", resourceUri, {
+        viewColumn: vscode.ViewColumn.One,
+        preserveFocus: false,
+        background: false,
+      });
+
+      const targetLocation = new vscode.Location(
+        textEditor.document.uri,
+        new vscode.Position(targetPosition.line, targetPosition.character)
+      );
+
+      await vscode.commands.executeCommand(
+        "editor.action.goToLocations",
+        textEditor.document.uri,
+        textEditor.selection.active,
+        [targetLocation],
+        "goto"
+      );
     })
   );
 

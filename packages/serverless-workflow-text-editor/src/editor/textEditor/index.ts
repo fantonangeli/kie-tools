@@ -16,4 +16,3 @@
 
 export * from "./SwfTextEditor";
 export * from "./SwfTextEditorController";
-export * from "./Utils";

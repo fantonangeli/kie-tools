@@ -74,16 +74,16 @@ describe("findPositionByStateName", () => {
   });
 
   it.each([
-    ["Hello State", { line: 8, character: 6 }],
-    ['State with "quotes" inside', { line: 16, character: 6 }],
+    ["Hello State", { line: 9, character: 7 }],
+    ['State with "quotes" inside', { line: 17, character: 7 }],
     ["Not present", null],
   ])('using the mock JSON, searching: "%s"', (stateName, position) => {
     expect(findPositionByStateName(mockJson, stateName, "JSON")).toStrictEqual(position);
   });
 
   it.each([
-    ["Hello State", { line: 8, character: 3 }],
-    ['State with "quotes" inside', { line: 13, character: 3 }],
+    ["Hello State", { line: 9, character: 4 }],
+    ['State with "quotes" inside', { line: 14, character: 4 }],
     ["Not present", null],
   ])('using the mock YAML, searching: "%s"', (stateName, position) => {
     expect(findPositionByStateName(mockYaml, stateName, "YAML")).toStrictEqual(position);

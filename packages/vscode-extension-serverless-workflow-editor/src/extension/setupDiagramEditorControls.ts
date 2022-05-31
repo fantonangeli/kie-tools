@@ -141,7 +141,7 @@ export async function setupDiagramEditorControls(args: {
 
       const targetLocation = new vscode.Location(
         textEditor.document.uri,
-        new vscode.Position(targetPosition.line, targetPosition.character)
+        new vscode.Position(targetPosition.line - 1, targetPosition.character - 1)
       );
 
       await vscode.commands.executeCommand(

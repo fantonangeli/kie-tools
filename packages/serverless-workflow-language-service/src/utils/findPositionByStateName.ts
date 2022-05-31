@@ -48,7 +48,7 @@ export const findPositionByStateName = (
 
     if (nameRegExp.test(line)) {
       const charNum = line.indexOf("name") - 1;
-      return { line: lineNum, character: charNum };
+      return { line: lineNum + 1, character: charNum + 1 };
     }
   }
 

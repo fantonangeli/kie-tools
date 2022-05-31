@@ -66,8 +66,4 @@ export class SwfServiceCatalogChannelApiImpl implements SwfServiceCatalogChannel
   public kogitoSwfServiceCatalog_setupServiceRegistryUrl(): void {
     vscode.commands.executeCommand(COMMAND_IDS.setupServiceRegistryUrl);
   }
-
-  public kogitoSwfServiceCatalog_moveCursorToNode(nodeName: string): void {
-    vscode.commands.executeCommand(COMMAND_IDS.moveCursorToNode, nodeName);
-  }
 }

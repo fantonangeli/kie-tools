@@ -25,6 +25,7 @@ initJsonSchemaDiagnostics();
 initYamlSchemaDiagnostics();
 
 export interface SwfTextEditorApi {
+  editor: editor.IStandaloneCodeEditor | undefined;
   show: (container: HTMLDivElement, theme?: EditorTheme) => editor.IStandaloneCodeEditor;
   undo: () => void;
   redo: () => void;

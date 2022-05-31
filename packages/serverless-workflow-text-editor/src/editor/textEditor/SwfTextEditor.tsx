@@ -22,6 +22,7 @@ import { initJsonCodeLenses } from "./augmentation/codeLenses";
 import { initAugmentationCommands } from "./augmentation/commands";
 import { ChannelType, EditorTheme, useKogitoEditorEnvelopeContext } from "@kie-tools-core/editor/dist/api";
 import { useSharedValue, useSubscription } from "@kie-tools-core/envelope-bus/dist/hooks";
+import { findPositionByStateName } from "@kie-tools/serverless-workflow-language-service/dist/utils";
 import { ServerlessWorkflowTextEditorChannelApi } from "../../api";
 import { editor } from "monaco-editor";
 
@@ -108,9 +109,18 @@ const RefForwardingSwfTextEditor: React.ForwardRefRenderFunction<SwfTextEditorAp
   ]);
 
   useSubscription(
-    editorEnvelopeCtx.channelApi?.notifications.kogitoSwfServiceCatalog_moveCursorToNode,
-    (nodeName: string) => {
-      console.log("nodeName", nodeName);
+    editorEnvelopeCtx.channelApi?.notifications.kogitoSwfLanguageService__moveCursorToNode,
+    ({ nodeName }: { nodeName: string }) => {
+      const targetPosition = findPositionByStateName(content, nodeName, "JSON");
+
+      if (!targetPosition) {
+        return;
+      }
+
+      controller.editor?.setPosition({
+        lineNumber: targetPosition.line,
+        column: targetPosition.character,
+      });
     }
   );
 

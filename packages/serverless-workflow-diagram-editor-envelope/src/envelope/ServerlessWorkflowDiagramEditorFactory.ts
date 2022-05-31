@@ -24,17 +24,17 @@ import {
 
 export interface CustomWindow {
   envelope: {};
-  onNodeClicked: (nodeName: string) => void;
+  moveCursorToNode: (nodeName: string) => void;
 }
 
 declare let window: CustomWindow;
 
-export const onNodeClicked =
+export const moveCursorToNode =
   (ctx: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>) => (nodeName: string) => {
     if (!nodeName) {
       return;
     }
-    ctx.channelApi.notifications.kogitoSwfServiceCatalog_moveCursorToNode.send(nodeName);
+    ctx.channelApi.notifications.kogitoSwfLanguageService__moveCursorToNode.send({ nodeName });
   };
 
 export class ServerlessWorkflowDiagramEditorFactory
@@ -46,7 +46,7 @@ export class ServerlessWorkflowDiagramEditorFactory
     ctx: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>,
     initArgs: EditorInitArgs
   ): Promise<ServerlessWorkflowDiagramEditor> {
-    window.onNodeClicked = onNodeClicked(ctx);
+    window.moveCursorToNode = moveCursorToNode(ctx);
     const languageData = getServerlessWorkflowLanguageData(initArgs.resourcesPathPrefix);
     const factory = new GwtEditorWrapperFactory<ServerlessWorkflowDiagramEditor>(
       languageData,

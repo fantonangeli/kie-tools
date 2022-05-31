@@ -17,14 +17,14 @@
 import { EditorFactory, EditorInitArgs, KogitoEditorEnvelopeContextType } from "@kie-tools-core/editor/dist/api";
 import { JavaCodeCompletionApi } from "@kie-tools-core/vscode-java-code-completion/dist/api";
 import { ServerlessWorkflowDiagramEditor } from "../ServerlessWorkflowDiagramEditor";
-import { ServerlessWorkflowDiagramEditorFactory, onNodeClicked } from "../ServerlessWorkflowDiagramEditorFactory";
+import { ServerlessWorkflowDiagramEditorFactory, moveCursorToNode } from "../ServerlessWorkflowDiagramEditorFactory";
 import { VsCodeServerlessWorkflowDiagramEditorChannelApi } from "./VsCodeServerlessWorkflowDiagramEditorChannelApi";
 
 export interface CustomWindow extends Window {
   envelope: {
     javaCodeCompletionService: JavaCodeCompletionApi;
   };
-  onNodeClicked: (nodeName: string) => void;
+  moveCursorToNode: (nodeName: string) => void;
 }
 
 declare let window: CustomWindow;
@@ -57,7 +57,7 @@ export class VsCodeServerlessWorkflowDiagramEditorFactory
       ...(window.envelope ?? {}),
       ...{ javaCodeCompletionService: new JavaCodeCompletionService(ctx) },
     };
-    window.onNodeClicked = onNodeClicked(ctx);
+    window.moveCursorToNode = moveCursorToNode(ctx);
 
     const factory = new ServerlessWorkflowDiagramEditorFactory(this.gwtEditorEnvelopeConfig);
 

@@ -118,7 +118,7 @@ export async function setupDiagramEditorControls(args: {
   );
 
   args.context.subscriptions.push(
-    vscode.commands.registerCommand(COMMAND_IDS.moveCursorToNode, async (nodeName: string) => {
+    vscode.commands.registerCommand(COMMAND_IDS.moveCursorToNode, async ({ nodeName }: { nodeName: string }) => {
       const textEditor = vscode.window.visibleTextEditors[0] || null;
 
       if (!textEditor || vscode.window.visibleTextEditors.length > 1) {

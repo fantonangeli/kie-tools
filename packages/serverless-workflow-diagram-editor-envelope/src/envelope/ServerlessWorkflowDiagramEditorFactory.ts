@@ -29,7 +29,6 @@ export interface CustomWindow {
 
 declare let window: CustomWindow;
 
-/* TODO: ServerlessWorkflowDiagramEditorFactory:moveCursorToNode() is not called from yml diagram  */
 export const moveCursorToNode =
   (ctx: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>) => (nodeName: string) => {
     if (!nodeName) {

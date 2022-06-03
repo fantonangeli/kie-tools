@@ -40,4 +40,13 @@ public class EditorWindow {
     }
 
     public static native void onContentChanged(String raw);
+
+    @JsOverlay
+    public static void onNodeClick(String stateName) {
+        if (stateName!=null){
+            moveCursorToNode(stateName);
+        }
+    }
+
+    public static native void moveCursorToNode(String stateName);
 }

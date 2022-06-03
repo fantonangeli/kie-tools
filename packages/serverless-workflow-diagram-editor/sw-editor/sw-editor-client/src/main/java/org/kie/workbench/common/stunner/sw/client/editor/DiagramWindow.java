@@ -9,9 +9,9 @@ public class DiagramWindow {
     @JsOverlay
     public static void onNodeClick(String stateName) {
         if (stateName!=null){
-            onNodeClicked(stateName);
+            moveCursorToNode(stateName);
         }
     }
 
-    public static native void onNodeClicked(String stateName);
+    public static native void moveCursorToNode(String stateName);
 }

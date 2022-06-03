@@ -108,7 +108,7 @@ const RefForwardingSwfTextEditor: React.ForwardRefRenderFunction<SwfTextEditorAp
   ]);
 
   useSubscription(
-    editorEnvelopeCtx.channelApi?.notifications.kogitoSwfServiceCatalog_nodeClicked,
+    editorEnvelopeCtx.channelApi?.notifications.kogitoSwfLanguageService__moveCursorToNode,
     (nodeName: string) => {
       console.log("nodeName", nodeName);
     }

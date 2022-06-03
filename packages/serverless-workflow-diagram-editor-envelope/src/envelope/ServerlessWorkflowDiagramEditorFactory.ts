@@ -34,7 +34,6 @@ export const onNodeClicked =
     if (!nodeName) {
       return;
     }
-    /* TODO: ServerlessWorkflowDiagramEditorFactory: replicate this to VSCode */
     ctx.channelApi.notifications.kogitoSwfServiceCatalog_nodeClicked.send(nodeName);
   };
 

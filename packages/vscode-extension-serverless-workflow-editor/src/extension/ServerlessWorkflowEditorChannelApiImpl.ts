@@ -190,6 +190,6 @@ export class ServerlessWorkflowEditorChannelApiImpl implements ServerlessWorkflo
   }
 
   public kogitoSwfLanguageService__moveCursorToNode(args: { nodeName: string }): void {
-    return this.swfLanguageServiceChannelApiImpl.kogitoSwfLanguageService__moveCursorToNode(args);
+    this.swfLanguageServiceChannelApiImpl.kogitoSwfLanguageService__moveCursorToNode(args);
   }
 }

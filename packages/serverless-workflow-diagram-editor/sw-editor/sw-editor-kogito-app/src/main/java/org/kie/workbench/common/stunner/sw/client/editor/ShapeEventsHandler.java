@@ -27,19 +27,18 @@ import org.kie.workbench.common.stunner.core.graph.Node;
 import org.kie.workbench.common.stunner.core.graph.content.view.View;
 import org.kie.workbench.common.stunner.sw.definition.State;
 
-
 @Singleton
 public class ShapeEventsHandler {
 
     @Inject
-    private DiagramApi DiagramApi;
+    private DiagramApi diagramApi;
 
     void onCanvasSelectionEvent(@Observes CanvasSelectionEvent event) {
         if (null != event.getCanvasHandler()) {
             if (event.getIdentifiers().size() == 1) {
                 final String uuid = event.getIdentifiers().iterator().next();
                 String stateName = obtainStateName(event.getCanvasHandler(), uuid);
-                DiagramApi.moveCursorToNode(stateName);
+                diagramApi.moveCursorToNode(stateName);
             }
         }
     }

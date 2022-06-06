@@ -31,6 +31,6 @@ public class DiagramApiInteropWrapper {
      */
     public native void moveCursorToNode(String stateName);
 
-    @JsProperty(name = "diagramApi")
+    @JsProperty(name = "diagramService")
     public static native DiagramApiInteropWrapper get();
 }

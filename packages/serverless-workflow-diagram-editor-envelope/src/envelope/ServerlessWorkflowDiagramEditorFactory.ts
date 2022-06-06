@@ -17,24 +17,20 @@
 import { EditorFactory, EditorInitArgs, KogitoEditorEnvelopeContextType } from "@kie-tools-core/editor/dist/api";
 import { GwtEditorWrapperFactory } from "@kie-tools/kie-bc-editors/dist/common";
 import { getServerlessWorkflowLanguageData, ServerlessWorkflowDiagramEditorChannelApi } from "../api";
+import { DiagramApi } from "../api/DiagramApi";
+import { DiagramService } from "../api/DiagramService";
 import {
   ServerlessWorkflowDiagramEditor,
   ServerlessWorkflowDiagramEditorImpl,
 } from "./ServerlessWorkflowDiagramEditor";
 
 export interface CustomWindow {
-  envelope: {};
+  envelope: {
+    diagramService: DiagramApi;
+  };
 }
 
 declare let window: CustomWindow;
-
-export const moveCursorToNode =
-  (ctx: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>) => (nodeName: string) => {
-    if (!nodeName) {
-      return;
-    }
-    ctx.channelApi.notifications.kogitoSwfLanguageService__moveCursorToNode.send({ nodeName });
-  };
 
 export class ServerlessWorkflowDiagramEditorFactory
   implements EditorFactory<ServerlessWorkflowDiagramEditor, ServerlessWorkflowDiagramEditorChannelApi>
@@ -47,9 +43,7 @@ export class ServerlessWorkflowDiagramEditorFactory
   ): Promise<ServerlessWorkflowDiagramEditor> {
     window.envelope = {
       ...(window.envelope ?? {}),
-      diagramApi: {
-        moveCursorToNode: moveCursorToNode(ctx),
-      },
+      diagramService: new DiagramService(ctx),
     };
     const languageData = getServerlessWorkflowLanguageData(initArgs.resourcesPathPrefix);
     const factory = new GwtEditorWrapperFactory<ServerlessWorkflowDiagramEditor>(

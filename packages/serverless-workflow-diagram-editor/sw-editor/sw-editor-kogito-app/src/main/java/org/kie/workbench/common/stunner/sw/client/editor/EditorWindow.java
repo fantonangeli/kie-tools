@@ -40,5 +40,4 @@ public class EditorWindow {
     }
 
     public static native void onContentChanged(String raw);
-
 }

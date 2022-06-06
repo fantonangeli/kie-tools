@@ -23,8 +23,10 @@ import { VsCodeServerlessWorkflowDiagramEditorChannelApi } from "./VsCodeServerl
 export interface CustomWindow extends Window {
   envelope: {
     javaCodeCompletionService: JavaCodeCompletionApi;
+    diagramApi: {
+      moveCursorToNode: (nodeName: string) => void;
+    };
   };
-  moveCursorToNode: (nodeName: string) => void;
 }
 
 declare let window: CustomWindow;
@@ -56,8 +58,10 @@ export class VsCodeServerlessWorkflowDiagramEditorFactory
     window.envelope = {
       ...(window.envelope ?? {}),
       ...{ javaCodeCompletionService: new JavaCodeCompletionService(ctx) },
+      diagramApi: {
+        moveCursorToNode: moveCursorToNode(ctx),
+      },
     };
-    window.moveCursorToNode = moveCursorToNode(ctx);
 
     const factory = new ServerlessWorkflowDiagramEditorFactory(this.gwtEditorEnvelopeConfig);
 

@@ -24,7 +24,6 @@ import {
 
 export interface CustomWindow {
   envelope: {};
-  moveCursorToNode: (nodeName: string) => void;
 }
 
 declare let window: CustomWindow;
@@ -46,7 +45,12 @@ export class ServerlessWorkflowDiagramEditorFactory
     ctx: KogitoEditorEnvelopeContextType<ServerlessWorkflowDiagramEditorChannelApi>,
     initArgs: EditorInitArgs
   ): Promise<ServerlessWorkflowDiagramEditor> {
-    window.moveCursorToNode = moveCursorToNode(ctx);
+    window.envelope = {
+      ...(window.envelope ?? {}),
+      diagramApi: {
+        moveCursorToNode: moveCursorToNode(ctx),
+      },
+    };
     const languageData = getServerlessWorkflowLanguageData(initArgs.resourcesPathPrefix);
     const factory = new GwtEditorWrapperFactory<ServerlessWorkflowDiagramEditor>(
       languageData,

@@ -30,7 +30,7 @@ export type Position = {
 export const findPositionByStateName = (
   fullText: string,
   stateName: string,
-  fileType: "JSON" | "YAML" = "JSON"
+  fileType: "json" | "yaml" = "json"
 ): Position | null => {
   if (!fullText || !stateName) {
     return null;
@@ -39,7 +39,7 @@ export const findPositionByStateName = (
   const fullTextSplit = fullText.split("\n");
   let nameRegExp = new RegExp(`"name"\\s*:\\s*"${stateName}"`);
 
-  if (fileType === "YAML") {
+  if (fileType === "yaml") {
     nameRegExp = new RegExp(`name\\s*:\\s*${stateName}`);
   }
 

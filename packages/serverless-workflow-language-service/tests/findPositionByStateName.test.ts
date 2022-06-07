@@ -65,12 +65,12 @@ const mockYaml = `
 describe("findPositionByStateName", () => {
   it("should return null with wrong inputs", () => {
     // @ts-ignore
-    expect(findPositionByStateName(null, null)).toBe(null);
+    expect(findPositionByStateName(null, null)).toBeNull();
     // @ts-ignore
-    expect(findPositionByStateName()).toBe(null);
-    expect(findPositionByStateName("", "")).toBe(null);
-    expect(findPositionByStateName("", "test")).toBe(null);
-    expect(findPositionByStateName("{ fakeJson: true }", "")).toBe(null);
+    expect(findPositionByStateName()).toBeNull();
+    expect(findPositionByStateName("", "")).toBeNull();
+    expect(findPositionByStateName("", "test")).toBeNull();
+    expect(findPositionByStateName("{ fakeJson: true }", "")).toBeNull();
   });
 
   it.each([

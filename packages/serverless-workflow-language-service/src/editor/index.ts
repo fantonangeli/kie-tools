@@ -23,6 +23,50 @@ export enum FileLanguage {
 }
 
 /**
+ * Position with coordinates in a text editor.
+ */
+export type Position = {
+  line: number;
+  character: number;
+};
+
+/**
+ * Find position (row number) of a node in a JSON by state name.
+ *
+ * @param fullText the full text where to search
+ * @param stateName the name of the node
+ * @param fileType the current file type
+ * @returns the position of the node, null if not found
+ */
+export const findPositionByStateName = (
+  fullText: string,
+  stateName: string,
+  fileType: "json" | "yaml" = "json"
+): Position | null => {
+  if (!fullText || !stateName) {
+    return null;
+  }
+
+  const fullTextSplit = fullText.split("\n");
+  let nameRegExp = new RegExp(`"name"\\s*:\\s*"${stateName}"`);
+
+  if (fileType === "yaml") {
+    nameRegExp = new RegExp(`name\\s*:\\s*${stateName}`);
+  }
+
+  for (let lineNum = 0, end = fullTextSplit.length; lineNum < end; lineNum++) {
+    const line = fullTextSplit[lineNum];
+
+    if (nameRegExp.test(line)) {
+      const charNum = line.indexOf("name") - 1;
+      return { line: lineNum + 1, character: charNum + 1 };
+    }
+  }
+
+  return null;
+};
+
+/**
  * Get the file language from a filename or path
  *
  * @param fileName the filename or path

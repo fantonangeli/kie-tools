@@ -31,14 +31,19 @@ describe("getFileLanguage", () => {
   it.each([
     ["not_valid.txt", null],
     ["/home/user/Desktop/not_valid.txt", null],
+    ["C:\\Users\\MyName\\Desktop\\not_valid.txt", null],
     ["not_valid.json", null],
     ["/home/user/Desktop/not_valid.json", null],
+    ["C:\\Users\\MyName\\Desktop\\not_valid.json", null],
     ["valid.sw.json", "json"],
     ["/home/user/Desktop/valid.sw.json", "json"],
+    ["C:\\Users\\MyName\\Desktop\\valid.sw.json", "json"],
     ["valid.sw.yml", "yaml"],
     ["/home/user/Desktop/valid.sw.yml", "yaml"],
+    ["C:\\Users\\MyName\\Desktop\\valid.sw.yml", "yaml"],
     ["valid.sw.yaml", "yaml"],
     ["/home/user/Desktop/valid.sw.yaml", "yaml"],
+    ["C:\\Users\\MyName\\Desktop\\valid.sw.yaml", "yaml"],
   ])("Checking file language of: %s", (fileName, expectFileLanguage) => {
     expect(getFileLanguage(fileName)).toBe(expectFileLanguage);
   });

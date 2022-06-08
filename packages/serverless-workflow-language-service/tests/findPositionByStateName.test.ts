@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { findPositionByStateName } from "@kie-tools/serverless-workflow-language-service/dist/utils";
+import { findPositionByStateName } from "@kie-tools/serverless-workflow-language-service/dist/editor";
 
 const mockJson = `{
   "id":"helloworld",

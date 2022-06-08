@@ -22,8 +22,11 @@ import { initJsonCodeLenses } from "./augmentation/codeLenses";
 import { initAugmentationCommands } from "./augmentation/commands";
 import { ChannelType, EditorTheme, useKogitoEditorEnvelopeContext } from "@kie-tools-core/editor/dist/api";
 import { useSharedValue, useSubscription } from "@kie-tools-core/envelope-bus/dist/hooks";
-import { findPositionByStateName } from "@kie-tools/serverless-workflow-language-service/dist/utils";
-import { getFileLanguage, FileLanguage } from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import {
+  findPositionByStateName,
+  getFileLanguage,
+  FileLanguage,
+} from "@kie-tools/serverless-workflow-language-service/dist/editor";
 import { ServerlessWorkflowTextEditorChannelApi } from "../../api";
 import { editor } from "monaco-editor";
 

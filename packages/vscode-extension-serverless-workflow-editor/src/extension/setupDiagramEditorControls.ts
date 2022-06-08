@@ -22,8 +22,7 @@ import {
 } from "./configuration";
 import { COMMAND_IDS } from "./commandIds";
 import { KogitoEditorStore } from "@kie-tools-core/vscode-extension";
-import { findPositionByStateName } from "@kie-tools/serverless-workflow-language-service/dist/utils";
-import { getFileLanguage } from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import { findPositionByStateName, getFileLanguage } from "@kie-tools/serverless-workflow-language-service/dist/editor";
 
 function isSwf(textDocument: vscode.TextDocument) {
   return getFileLanguage(textDocument.fileName) !== null;

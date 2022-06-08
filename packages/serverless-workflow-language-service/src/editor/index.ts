@@ -35,24 +35,22 @@ export type Position = {
  *
  * @param fullText the full text where to search
  * @param stateName the name of the node
- * @param fileType the current file type
+ * @param fileLanguage the current file type
  * @returns the position of the node, null if not found
  */
 export const findPositionByStateName = (
   fullText: string,
   stateName: string,
-  fileType: "json" | "yaml" = "json"
+  fileLanguage = FileLanguage.JSON
 ): Position | null => {
   if (!fullText || !stateName) {
     return null;
   }
 
   const fullTextSplit = fullText.split("\n");
-  let nameRegExp = new RegExp(`"name"\\s*:\\s*"${stateName}"`);
-
-  if (fileType === "yaml") {
-    nameRegExp = new RegExp(`name\\s*:\\s*${stateName}`);
-  }
+  const nameRegExp = new RegExp(
+    fileLanguage === "yaml" ? `name\\s*:\\s*${stateName}` : `"name"\\s*:\\s*"${stateName}"`
+  );
 
   for (let lineNum = 0, end = fullTextSplit.length; lineNum < end; lineNum++) {
     const line = fullTextSplit[lineNum];

@@ -52,9 +52,7 @@ const RefForwardingSwfTextEditor: React.ForwardRefRenderFunction<SwfTextEditorAp
     editorEnvelopeCtx.channelApi?.shared.kogitoSwfServiceCatalog_serviceRegistryUrl
   );
 
-  const fileLanguage = useMemo<FileLanguage | null>(() => {
-    return getFileLanguage(fileName);
-  }, [fileName]);
+  const fileLanguage = useMemo(() => getFileLanguage(fileName), [fileName]);
 
   const controller: SwfTextEditorApi = useMemo<SwfTextEditorApi>(() => {
     if (fileLanguage !== null) {

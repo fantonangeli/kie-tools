@@ -139,7 +139,7 @@ export async function setupDiagramEditorControls(args: {
         return;
       }
 
-      await vscode.commands.executeCommand("vscode.open", resourceUri, {
+      const openResult = await vscode.commands.executeCommand("vscode.open", resourceUri, {
         viewColumn: vscode.ViewColumn.One,
         preserveFocus: false,
         background: false,
@@ -150,13 +150,12 @@ export async function setupDiagramEditorControls(args: {
         new vscode.Position(targetPosition.line - 1, targetPosition.character - 1)
       );
 
-      await vscode.commands.executeCommand(
-        "editor.action.goToLocations",
-        textEditor.document.uri,
-        textEditor.selection.active,
-        [targetLocation],
-        "goto"
-      );
+      const vsPosition = new vscode.Position(targetPosition.line - 1, targetPosition.character - 1);
+
+      if (!vscode.window.activeTextEditor) {
+        return;
+      }
+      vscode.window.activeTextEditor.selections = [new vscode.Selection(vsPosition, vsPosition)];
     })
   );
 

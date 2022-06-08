@@ -23,9 +23,10 @@ import {
 import { COMMAND_IDS } from "./commandIds";
 import { KogitoEditorStore } from "@kie-tools-core/vscode-extension";
 import { findPositionByStateName } from "@kie-tools/serverless-workflow-language-service/dist/utils";
+import { getFileLanguage } from "@kie-tools/serverless-workflow-language-service/dist/editor";
 
 function isSwf(textDocument: vscode.TextDocument) {
-  return /^.*\.sw\.(json|yml|yaml)$/.test(textDocument.fileName);
+  return getFileLanguage(textDocument.fileName) !== null;
 }
 
 async function openAsDiagramIfSwf(args: { textEditor: vscode.TextEditor; active: boolean }) {
@@ -127,7 +128,13 @@ export async function setupDiagramEditorControls(args: {
       }
 
       const resourceUri = textEditor.document.uri;
-      const targetPosition = findPositionByStateName(textEditor.document.getText(), nodeName);
+      const fileLanguage = getFileLanguage(textEditor.document.fileName);
+
+      if (!fileLanguage) {
+        return;
+      }
+
+      const targetPosition = findPositionByStateName(textEditor.document.getText(), nodeName, fileLanguage);
 
       if (targetPosition === null) {
         return;

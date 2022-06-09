@@ -49,7 +49,7 @@ export const findPositionByStateName = (
 
   const fullTextSplit = fullText.split("\n");
   const nameRegExp = new RegExp(
-    fileLanguage === "yaml" ? `name\\s*:\\s*${stateName}` : `"name"\\s*:\\s*"${stateName}"`
+    fileLanguage === FileLanguage.YAML ? `name\\s*:\\s*${stateName}` : `"name"\\s*:\\s*"${stateName}"`
   );
 
   for (let lineNum = 0, end = fullTextSplit.length; lineNum < end; lineNum++) {
@@ -71,14 +71,11 @@ export const findPositionByStateName = (
  * @returns the file language, null if found
  */
 export const getFileLanguage = (fileName: string): FileLanguage | null => {
-  if (!fileName) {
-    return null;
-  }
-
-  if (fileName.endsWith(".sw.json")) {
+  if (/\.sw\.json$/i.test(fileName)) {
     return FileLanguage.JSON;
   }
-  if (fileName.endsWith(".sw.yaml") || fileName.endsWith(".sw.yml")) {
+
+  if (/\.sw\.(yml|yaml)/i.test(fileName)) {
     return FileLanguage.YAML;
   }
 

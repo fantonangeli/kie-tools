@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { getFileLanguage } from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import { getFileLanguage, FileLanguage } from "@kie-tools/serverless-workflow-language-service/dist/editor";
 
 describe("getFileLanguage", () => {
   it("Checking file language with not valid inputs", () => {
@@ -33,17 +33,25 @@ describe("getFileLanguage", () => {
     ["/home/user/Desktop/not_valid.txt", null],
     ["C:\\Users\\MyName\\Desktop\\not_valid.txt", null],
     ["not_valid.json", null],
+    ["not_valid.sw.json.txt", null],
     ["/home/user/Desktop/not_valid.json", null],
     ["C:\\Users\\MyName\\Desktop\\not_valid.json", null],
-    ["valid.sw.json", "json"],
-    ["/home/user/Desktop/valid.sw.json", "json"],
-    ["C:\\Users\\MyName\\Desktop\\valid.sw.json", "json"],
-    ["valid.sw.yml", "yaml"],
-    ["/home/user/Desktop/valid.sw.yml", "yaml"],
-    ["C:\\Users\\MyName\\Desktop\\valid.sw.yml", "yaml"],
-    ["valid.sw.yaml", "yaml"],
-    ["/home/user/Desktop/valid.sw.yaml", "yaml"],
-    ["C:\\Users\\MyName\\Desktop\\valid.sw.yaml", "yaml"],
+    ["valid.sw.json", FileLanguage.JSON],
+    ["/home/user/Desktop/valid.sw.json", FileLanguage.JSON],
+    ["C:\\Users\\MyName\\Desktop\\valid.sw.json", FileLanguage.JSON],
+    ["VALID.SW.JSON", FileLanguage.JSON],
+    ["/HOME/USER/DESKTOP/VALID.SW.JSON", FileLanguage.JSON],
+    ["C:\\USERS\\MYNAME\\DESKTOP\\VALID.SW.JSON", FileLanguage.JSON],
+    ["valid.sw.yml", FileLanguage.YAML],
+    ["VALID.SW.YML", FileLanguage.YAML],
+    ["/home/user/Desktop/valid.sw.yml", FileLanguage.YAML],
+    ["C:\\Users\\MyName\\Desktop\\valid.sw.yml", FileLanguage.YAML],
+    ["valid.sw.yaml", FileLanguage.YAML],
+    ["/home/user/Desktop/valid.sw.yaml", FileLanguage.YAML],
+    ["C:\\Users\\MyName\\Desktop\\valid.sw.yaml", FileLanguage.YAML],
+    ["VALID.SW.YAML", FileLanguage.YAML],
+    ["/HOME/USER/DESKTOP/VALID.SW.YAML", FileLanguage.YAML],
+    ["C:\\USERS\\MYNAME\\DESKTOP\\VALID.SW.YAML", FileLanguage.YAML],
   ])("Checking file language of: %s", (fileName, expectFileLanguage) => {
     expect(getFileLanguage(fileName)).toBe(expectFileLanguage);
   });

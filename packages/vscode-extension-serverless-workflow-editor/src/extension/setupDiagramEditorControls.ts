@@ -118,45 +118,49 @@ export async function setupDiagramEditorControls(args: {
   );
 
   args.context.subscriptions.push(
-    vscode.commands.registerCommand(COMMAND_IDS.moveCursorToNode, async ({ nodeName }: { nodeName: string }) => {
-      const textEditor = vscode.window.visibleTextEditors[0] || null;
+    vscode.commands.registerCommand(
+      COMMAND_IDS.moveCursorToNode,
+      async ({ nodeName, documentUri }: { nodeName: string; documentUri: string }) => {
+        const textEditor = vscode.window.visibleTextEditors.filter(
+          (textEditor: vscode.TextEditor) => textEditor.document.uri.path === documentUri
+        )[0];
 
-      if (!textEditor || vscode.window.visibleTextEditors.length > 1) {
-        console.debug("TextEditor not found");
-        return;
+        if (!textEditor) {
+          console.debug("TextEditor not found");
+          return;
+        }
+
+        const resourceUri = textEditor.document.uri;
+        const fileLanguage = getFileLanguage(textEditor.document.fileName);
+
+        if (!fileLanguage) {
+          return;
+        }
+
+        const targetPosition = findPositionByStateName(textEditor.document.getText(), nodeName, fileLanguage);
+
+        if (targetPosition === null) {
+          return;
+        }
+
+        await vscode.commands.executeCommand("vscode.open", resourceUri, {
+          viewColumn: textEditor.viewColumn,
+          preserveFocus: false,
+        } as vscode.TextDocumentShowOptions);
+
+        new vscode.Location(
+          textEditor.document.uri,
+          new vscode.Position(targetPosition.line - 1, targetPosition.character - 1)
+        );
+
+        const vsPosition = new vscode.Position(targetPosition.line - 1, targetPosition.character - 1);
+
+        if (!vscode.window.activeTextEditor) {
+          return;
+        }
+        vscode.window.activeTextEditor.selections = [new vscode.Selection(vsPosition, vsPosition)];
       }
-
-      const resourceUri = textEditor.document.uri;
-      const fileLanguage = getFileLanguage(textEditor.document.fileName);
-
-      if (!fileLanguage) {
-        return;
-      }
-
-      const targetPosition = findPositionByStateName(textEditor.document.getText(), nodeName, fileLanguage);
-
-      if (targetPosition === null) {
-        return;
-      }
-
-      const openResult = await vscode.commands.executeCommand("vscode.open", resourceUri, {
-        viewColumn: vscode.ViewColumn.One,
-        preserveFocus: false,
-        background: false,
-      });
-
-      const targetLocation = new vscode.Location(
-        textEditor.document.uri,
-        new vscode.Position(targetPosition.line - 1, targetPosition.character - 1)
-      );
-
-      const vsPosition = new vscode.Position(targetPosition.line - 1, targetPosition.character - 1);
-
-      if (!vscode.window.activeTextEditor) {
-        return;
-      }
-      vscode.window.activeTextEditor.selections = [new vscode.Selection(vsPosition, vsPosition)];
-    })
+    )
   );
 
   if (vscode.window.activeTextEditor) {

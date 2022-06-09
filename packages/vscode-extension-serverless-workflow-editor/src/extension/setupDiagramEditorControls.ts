@@ -148,11 +148,6 @@ export async function setupDiagramEditorControls(args: {
           preserveFocus: false,
         } as vscode.TextDocumentShowOptions);
 
-        new vscode.Location(
-          textEditor.document.uri,
-          new vscode.Position(targetPosition.line - 1, targetPosition.character - 1)
-        );
-
         const vsPosition = new vscode.Position(targetPosition.line - 1, targetPosition.character - 1);
 
         if (!vscode.window.activeTextEditor) {

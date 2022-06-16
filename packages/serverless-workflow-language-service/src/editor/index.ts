@@ -14,10 +14,14 @@
  * limitations under the License.
  */
 
+import { safeLoad as loadYaml } from "yaml-language-server-parser";
+import * as jsonParse from "json-to-ast";
+
 /**
  * File language for an opened file in the text editor.
  */
 export enum FileLanguage {
+  /* TODO: index: remove this from here? */
   JSON = "json",
   YAML = "yaml",
 }
@@ -26,42 +30,9 @@ export enum FileLanguage {
  * Position with coordinates in a text editor.
  */
 export type Position = {
+  /* TODO: index: remove this from here? */
   line: number;
   character: number;
-};
-
-/**
- * Find position (row number) of a node in a JSON by state name.
- *
- * @param fullText the full text where to search
- * @param stateName the name of the node
- * @param fileLanguage the current file type
- * @returns the position of the node, null if not found
- */
-export const findPositionByStateName = (
-  fullText: string,
-  stateName: string,
-  fileLanguage = FileLanguage.JSON
-): Position | null => {
-  if (!fullText || !stateName) {
-    return null;
-  }
-
-  const fullTextSplit = fullText.split("\n");
-  const nameRegExp = new RegExp(
-    fileLanguage === FileLanguage.YAML ? `name\\s*:\\s*${stateName}` : `"name"\\s*:\\s*"${stateName}"`
-  );
-
-  for (let lineNum = 0, end = fullTextSplit.length; lineNum < end; lineNum++) {
-    const line = fullTextSplit[lineNum];
-
-    if (nameRegExp.test(line)) {
-      const charNum = line.indexOf("name") - 1;
-      return { line: lineNum + 1, character: charNum + 1 };
-    }
-  }
-
-  return null;
 };
 
 /**
@@ -81,3 +52,5 @@ export const getFileLanguage = (fileName: string): FileLanguage | null => {
 
   return null;
 };
+
+export * from "./SwfJsonOffsets";

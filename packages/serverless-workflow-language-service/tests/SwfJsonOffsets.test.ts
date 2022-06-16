@@ -57,9 +57,9 @@ describe("SwfJsonOffsets tests", () => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
 
-      expect(offsets.states["Hello State"].stateNameOffset).toBe(141);
-      expect(offsets.states["Hello State Two"].offset.start).toBe(283);
-      expect(offsets.states["Hello State Two"].offset.end).toBe(423);
+      expect(offsets.states["Hello State"].stateNameOffset).toBe(146);
+      expect(offsets.states["Hello State Two"].offset.start).toBe(288);
+      expect(offsets.states["Hello State Two"].offset.end).toBe(428);
     });
 
     it("Should return a valid object parsing the input file 'greeting.sw.json'", () => {
@@ -69,7 +69,7 @@ describe("SwfJsonOffsets tests", () => {
 
       expect(offsets.states["GreetInEnglish"].stateNameOffset).toBe(840);
       expect(offsets.states["GetGreeting"].offset.start).toBe(1320);
-      expect(offsets.states["GetGreeting"].offset.end).toBe(1780);
+      expect(offsets.states["GetGreeting"].offset.end).toBe(1770);
     });
 
     it("Should return a valid object parsing the input file 'greeting-long.sw.json'", () => {
@@ -104,8 +104,8 @@ describe("SwfJsonOffsets tests", () => {
     });
 
     it.each([
-      ["helloState.sw.json", "Hello State", 141],
-      ["helloState.sw.json", "Hello State Two", 283],
+      ["helloState.sw.json", "Hello State", 146],
+      ["helloState.sw.json", "Hello State Two", 288],
       ["greeting.sw.json", "GreetInEnglish", 840],
       ["greeting.sw.json", "GetGreeting", 1320],
     ])(

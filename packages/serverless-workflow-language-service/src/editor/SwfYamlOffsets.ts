@@ -17,7 +17,7 @@
 import { load } from "yaml-language-server-parser";
 import { SwfOffsetsApi } from "../api/SwfOffsetsApi";
 
-const astTransformQuery = `$.mappings[key.value="states"].value.items{
+const astTransformQuery = `mappings[key.value="states"].value.items{
     "states":{
         mappings[key.value="name"].value.value:{
             "stateNameOffset":startPosition,
@@ -37,7 +37,7 @@ export class SwfYamlOffsets extends SwfOffsetsApi {
 
   getFullAST(): any {
     if (!this.fullText) {
-      return {};
+      return null;
     }
 
     try {
@@ -45,12 +45,12 @@ export class SwfYamlOffsets extends SwfOffsetsApi {
 
       // check if the yaml is not valid
       if (ast.errors && ast.errors.length) {
-        return {};
+        return null;
       }
 
       return ast;
     } catch (e) {
-      return {};
+      return null;
     }
   }
 }

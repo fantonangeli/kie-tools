@@ -17,17 +17,18 @@
 import * as jsonParse from "json-to-ast";
 import { SwfOffsetsApi } from "../api/SwfOffsetsApi";
 
-const astTransformQuery = `$.children[key.value='states'].value.children {
-      "states":{
-          children[key.value='name'].value.value:{
-              "stateNameOffset": loc.start.offset,
-              "offset": $.loc{
-                  "start":start.offset,
-                  "end":end.offset
-              }
-          }
-      }
-  }`;
+const astTransformQuery = `children[key.value='states'].value.children {
+    "states":{
+        children[key.value='name'].value.value:{
+            "stateNameOffset": children[key.value='name'].loc.start.offset,
+            "offset": $.loc{
+                "start":start.offset,
+                "end":end.offset
+            }
+        }
+    }
+}
+`;
 
 export class SwfJsonOffsets extends SwfOffsetsApi {
   constructor(fullText: string) {
@@ -35,10 +36,14 @@ export class SwfJsonOffsets extends SwfOffsetsApi {
   }
 
   getFullAST(): any {
+    if (!this.fullText) {
+      return null;
+    }
+
     try {
       return jsonParse(this.fullText);
     } catch (e) {
-      return {};
+      return null;
     }
   }
 }

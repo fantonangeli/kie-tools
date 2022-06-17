@@ -26,13 +26,13 @@ describe("SwfJsonOffsets tests", () => {
   );
 
   describe("getFullAST", () => {
-    it("Should return {} with wrong inputs", () => {
-      expect(new SwfJsonOffsets("").getFullAST()).toStrictEqual({});
+    it("Should return null with wrong inputs", () => {
+      expect(new SwfJsonOffsets("").getFullAST()).toStrictEqual(null);
       // @ts-ignore
-      expect(new SwfJsonOffsets(null).getFullAST()).toStrictEqual({});
+      expect(new SwfJsonOffsets(null).getFullAST()).toStrictEqual(null);
       // @ts-ignore
-      expect(new SwfJsonOffsets().getFullAST()).toStrictEqual({});
-      expect(new SwfJsonOffsets('{"notValid":').getFullAST()).toStrictEqual({});
+      expect(new SwfJsonOffsets().getFullAST()).toStrictEqual(null);
+      expect(new SwfJsonOffsets('{"notValid":').getFullAST()).toStrictEqual(null);
     });
 
     it.each(allInputFiles)("Should return a valid object parsing the input file %s", (fileName) => {
@@ -58,8 +58,10 @@ describe("SwfJsonOffsets tests", () => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
 
-      expect(getLineFromOffset(fullText, offsets.states["Hello State"].stateNameOffset, 1)).toContain("Hello State");
-      expect(getLineFromOffset(fullText, offsets.states["Hello State Two"].offset.start, 1)).toContain("Hello State");
+      expect(getLineFromOffset(fullText, offsets.states["Hello State"].stateNameOffset)).toContain("Hello State");
+      expect(getLineFromOffset(fullText, offsets.states["Hello State Two"].offset.start, 1)).toContain(
+        "Hello State Two"
+      );
       expect(offsets.states["Hello State Two"].offset.end).toBe(428);
     });
 
@@ -68,9 +70,7 @@ describe("SwfJsonOffsets tests", () => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
 
-      expect(getLineFromOffset(fullText, offsets.states["GreetInEnglish"].stateNameOffset, 1)).toContain(
-        "GreetInEnglish"
-      );
+      expect(getLineFromOffset(fullText, offsets.states["GreetInEnglish"].stateNameOffset)).toContain("GreetInEnglish");
       expect(getLineFromOffset(fullText, offsets.states["GetGreeting"].offset.start, 1)).toContain("GetGreeting");
       expect(offsets.states["GetGreeting"].offset.end).toBe(1770);
     });
@@ -80,9 +80,7 @@ describe("SwfJsonOffsets tests", () => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
 
-      expect(getLineFromOffset(fullText, offsets.states["GreetInEnglish"].stateNameOffset, 1)).toContain(
-        "GreetInEnglish"
-      );
+      expect(getLineFromOffset(fullText, offsets.states["GreetInEnglish"].stateNameOffset)).toContain("GreetInEnglish");
       expect(getLineFromOffset(fullText, offsets.states["GreetInPortuguese 2"].offset.start, 1)).toContain(
         "GreetInPortuguese 2"
       );
@@ -111,16 +109,16 @@ describe("SwfJsonOffsets tests", () => {
     });
 
     it.each([
-      ["helloState.sw.json", "Hello State", 146],
-      ["helloState.sw.json", "Hello State Two", 288],
-      ["greeting.sw.json", "GreetInEnglish", 840],
-      ["greeting.sw.json", "GetGreeting", 1320],
+      ["helloState.sw.json", "Hello State"],
+      ["helloState.sw.json", "Hello State Two"],
+      ["greeting.sw.json", "GreetInEnglish"],
+      ["greeting.sw.json", "GetGreeting"],
     ])(
-      'On file %s, getStateNameOffset() with state name "%s" should return %s',
-      (fileName, stateName, expectedOffset) => {
+      'On file %s, getStateNameOffset() with state name "%s" should return a correct offset',
+      (fileName, stateName) => {
         const fullText = allInputFilesFullText.get(fileName)!;
         const swfJsonOffsets = new SwfJsonOffsets(fullText);
-        expect(swfJsonOffsets.getStateNameOffset(stateName)).toBe(expectedOffset);
+        expect(getLineFromOffset(fullText, swfJsonOffsets.getStateNameOffset(stateName))).toContain(stateName);
       }
     );
   });
@@ -150,7 +148,7 @@ describe("SwfJsonOffsets tests", () => {
       ["helloState.sw.json", "Hello State Two"],
       ["greeting.sw.json", "GreetInEnglish"],
       ["greeting.sw.json", "GetGreeting"],
-    ])('On file %s, with offset %d should return state name "%s"', (fileName, stateName) => {
+    ])('On file %s, with the offset of "%s" should return the correct state name', (fileName, stateName) => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const swfJsonOffsets = new SwfJsonOffsets(fullText);
       const offset = swfJsonOffsets.getStateNameOffset(stateName);

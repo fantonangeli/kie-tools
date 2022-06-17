@@ -21,19 +21,9 @@ import * as jsonParse from "json-to-ast";
  * File language for an opened file in the text editor.
  */
 export enum FileLanguage {
-  /* TODO: index: remove this from here? */
   JSON = "json",
   YAML = "yaml",
 }
-
-/**
- * Position with coordinates in a text editor.
- */
-export type Position = {
-  /* TODO: index: remove this from here? */
-  line: number;
-  character: number;
-};
 
 /**
  * Get the file language from a filename or path

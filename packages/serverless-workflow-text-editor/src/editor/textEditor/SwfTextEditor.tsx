@@ -22,11 +22,7 @@ import { initJsonCodeLenses } from "./augmentation/codeLenses";
 import { initAugmentationCommands } from "./augmentation/commands";
 import { ChannelType, EditorTheme, useKogitoEditorEnvelopeContext } from "@kie-tools-core/editor/dist/api";
 import { useSharedValue, useSubscription } from "@kie-tools-core/envelope-bus/dist/hooks";
-import {
-  findPositionByStateName,
-  getFileLanguage,
-  FileLanguage,
-} from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import { getFileLanguage, SwfJsonOffsets } from "@kie-tools/serverless-workflow-language-service/dist/editor";
 import { ServerlessWorkflowTextEditorChannelApi } from "../../api";
 import { editor } from "monaco-editor";
 
@@ -113,18 +109,16 @@ const RefForwardingSwfTextEditor: React.ForwardRefRenderFunction<SwfTextEditorAp
         return;
       }
 
-      const targetPosition = findPositionByStateName(editorContent, nodeName, fileLanguage);
+      const swfJsonOffsets = new SwfJsonOffsets(editorContent);
+      const targetOffset = swfJsonOffsets.getStateNameOffset(nodeName);
+      const targetPosition = controller.editor?.getModel()?.getPositionAt(targetOffset);
 
       if (!targetPosition) {
         return;
       }
 
-      controller.editor?.revealLineInCenter(targetPosition.line);
-
-      controller.editor?.setPosition({
-        lineNumber: targetPosition.line,
-        column: targetPosition.character,
-      });
+      controller.editor?.revealLineInCenter(targetPosition.lineNumber);
+      controller.editor?.setPosition(targetPosition);
     }
   );
 

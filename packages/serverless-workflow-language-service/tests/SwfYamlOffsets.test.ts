@@ -26,13 +26,13 @@ describe("SwfYamlOffsets tests", () => {
   );
 
   describe("getFullAST", () => {
-    it("Should return {} with wrong inputs", () => {
-      expect(new SwfYamlOffsets("").getFullAST()).toStrictEqual({});
+    it("Should return null with wrong inputs", () => {
+      expect(new SwfYamlOffsets("").getFullAST()).toStrictEqual(null);
       // @ts-ignore
-      expect(new SwfYamlOffsets(null).getFullAST()).toStrictEqual({});
+      expect(new SwfYamlOffsets(null).getFullAST()).toStrictEqual(null);
       // @ts-ignore
-      expect(new SwfYamlOffsets().getFullAST()).toStrictEqual({});
-      expect(new SwfYamlOffsets('{"notValid":').getFullAST()).toStrictEqual({});
+      expect(new SwfYamlOffsets().getFullAST()).toStrictEqual(null);
+      expect(new SwfYamlOffsets('{"notValid":').getFullAST()).toStrictEqual(null);
     });
 
     it.each(allInputFiles)("Should return a valid object parsing the input file %s", (fileName) => {
@@ -43,7 +43,7 @@ describe("SwfYamlOffsets tests", () => {
   });
 
   describe("getAllOffsets", () => {
-    it("Should return {} with wrong inputs", () => {
+    it("Should return null with wrong inputs", () => {
       const emptyOffsets = { states: {} };
       // @ts-ignore
       expect(new SwfYamlOffsets(null).getAllOffsets()).toStrictEqual(emptyOffsets);
@@ -117,11 +117,14 @@ describe("SwfYamlOffsets tests", () => {
       ["helloState.sw.yaml", "Hello State Two"],
       ["greeting.sw.yaml", "GreetInEnglish"],
       ["greeting.sw.yaml", "GetGreeting"],
-    ])('On file %s, getStateNameOffset() with state name "%s" should return %s', (fileName, stateName) => {
-      const fullText = allInputFilesFullText.get(fileName)!;
-      const swfYamlOffsets = new SwfYamlOffsets(fullText);
-      expect(getLineFromOffset(fullText, swfYamlOffsets.getStateNameOffset(stateName))).toContain(stateName);
-    });
+    ])(
+      'On file %s, getStateNameOffset() with state name "%s" should return a correct offset',
+      (fileName, stateName) => {
+        const fullText = allInputFilesFullText.get(fileName)!;
+        const swfYamlOffsets = new SwfYamlOffsets(fullText);
+        expect(getLineFromOffset(fullText, swfYamlOffsets.getStateNameOffset(stateName))).toContain(stateName);
+      }
+    );
   });
 
   describe("getStateNameFromOffset", () => {
@@ -149,7 +152,7 @@ describe("SwfYamlOffsets tests", () => {
       ["helloState.sw.yaml", "Hello State Two"],
       ["greeting.sw.yaml", "GreetInEnglish"],
       ["greeting.sw.yaml", "GetGreeting"],
-    ])('On file %s, with offset %d should return state name "%s"', (fileName, stateName) => {
+    ])('On file %s, with the offset of "%s" should return the correct state name', (fileName, stateName) => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const swfYamlOffsets = new SwfYamlOffsets(fullText);
       const offset = swfYamlOffsets.getStateNameOffset(stateName);

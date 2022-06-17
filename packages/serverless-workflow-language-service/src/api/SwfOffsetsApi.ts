@@ -82,6 +82,10 @@ export abstract class SwfOffsetsApi {
 
     const fullAST = this.getFullAST();
 
+    if (!fullAST) {
+      return { states: {} };
+    }
+
     try {
       return jsonata(this.astTransformQuery).evaluate(fullAST);
     } catch (e) {

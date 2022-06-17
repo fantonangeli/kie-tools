@@ -103,13 +103,11 @@ const RefForwardingSwfTextEditor: React.ForwardRefRenderFunction<SwfTextEditorAp
   useSubscription(
     editorEnvelopeCtx.channelApi?.notifications.kogitoSwfLanguageService__moveCursorToNode,
     ({ nodeName }: { nodeName: string }) => {
-      const editorContent = controller.getContent();
-
-      if (!fileLanguage || !editorContent) {
+      if (!fileLanguage) {
         return;
       }
 
-      const swfJsonOffsets = new SwfJsonOffsets(editorContent);
+      const swfJsonOffsets = new SwfJsonOffsets(content);
       const targetOffset = swfJsonOffsets.getStateNameOffset(nodeName);
       const targetPosition = controller.editor?.getModel()?.getPositionAt(targetOffset);
 

@@ -10,7 +10,7 @@ states:
     data:
       result: Hello World!
     end: true
-  - name: State with "quotes" inside
+  - name: Hello State Two
     type: inject
     data:
       result: Hello World!

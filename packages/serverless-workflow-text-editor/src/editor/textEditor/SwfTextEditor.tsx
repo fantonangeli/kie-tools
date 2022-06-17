@@ -22,7 +22,13 @@ import { initJsonCodeLenses } from "./augmentation/codeLenses";
 import { initAugmentationCommands } from "./augmentation/commands";
 import { ChannelType, EditorTheme, useKogitoEditorEnvelopeContext } from "@kie-tools-core/editor/dist/api";
 import { useSharedValue, useSubscription } from "@kie-tools-core/envelope-bus/dist/hooks";
-import { getFileLanguage, SwfJsonOffsets } from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import {
+  getFileLanguage,
+  SwfJsonOffsets,
+  SwfYamlOffsets,
+  FileLanguage,
+} from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import { SwfOffsetsApi } from "@kie-tools/serverless-workflow-language-service/dist/api";
 import { ServerlessWorkflowTextEditorChannelApi } from "../../api";
 import { editor } from "monaco-editor";
 
@@ -107,8 +113,9 @@ const RefForwardingSwfTextEditor: React.ForwardRefRenderFunction<SwfTextEditorAp
         return;
       }
 
-      const swfJsonOffsets = new SwfJsonOffsets(content);
-      const targetOffset = swfJsonOffsets.getStateNameOffset(nodeName);
+      const swfOffsetsApi: SwfOffsetsApi =
+        fileLanguage === FileLanguage.JSON ? new SwfJsonOffsets(content) : new SwfYamlOffsets(content);
+      const targetOffset = swfOffsetsApi.getStateNameOffset(nodeName);
       const targetPosition = controller.editor?.getModel()?.getPositionAt(targetOffset);
 
       if (!targetPosition) {

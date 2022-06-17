@@ -16,6 +16,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import { SwfJsonOffsets } from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import { getLineFromOffset } from "./testUtils";
 
 describe("SwfJsonOffsets tests", () => {
   const inputFilesBasePath = path.join("tests", "inputFiles", "json") + "/";
@@ -57,8 +58,8 @@ describe("SwfJsonOffsets tests", () => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
 
-      expect(offsets.states["Hello State"].stateNameOffset).toBe(146);
-      expect(offsets.states["Hello State Two"].offset.start).toBe(288);
+      expect(getLineFromOffset(fullText, offsets.states["Hello State"].stateNameOffset, 1)).toContain("Hello State");
+      expect(getLineFromOffset(fullText, offsets.states["Hello State Two"].offset.start, 1)).toContain("Hello State");
       expect(offsets.states["Hello State Two"].offset.end).toBe(428);
     });
 
@@ -67,8 +68,10 @@ describe("SwfJsonOffsets tests", () => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
 
-      expect(offsets.states["GreetInEnglish"].stateNameOffset).toBe(840);
-      expect(offsets.states["GetGreeting"].offset.start).toBe(1320);
+      expect(getLineFromOffset(fullText, offsets.states["GreetInEnglish"].stateNameOffset, 1)).toContain(
+        "GreetInEnglish"
+      );
+      expect(getLineFromOffset(fullText, offsets.states["GetGreeting"].offset.start, 1)).toContain("GetGreeting");
       expect(offsets.states["GetGreeting"].offset.end).toBe(1770);
     });
 
@@ -77,8 +80,12 @@ describe("SwfJsonOffsets tests", () => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
 
-      expect(offsets.states["GreetInEnglish"].stateNameOffset).toBe(840);
-      expect(offsets.states["GreetInPortuguese 2"].offset.start).toBe(1640);
+      expect(getLineFromOffset(fullText, offsets.states["GreetInEnglish"].stateNameOffset, 1)).toContain(
+        "GreetInEnglish"
+      );
+      expect(getLineFromOffset(fullText, offsets.states["GreetInPortuguese 2"].offset.start, 1)).toContain(
+        "GreetInPortuguese 2"
+      );
       expect(offsets.states["GreetInEnglish 4"].offset.end).toBe(2446);
     });
   });
@@ -131,7 +138,7 @@ describe("SwfJsonOffsets tests", () => {
     });
 
     it("Should return null if the state is not found", () => {
-      expect(helloStateJsonOffsets.getStateNameFromOffset(999999999999999999999999999999999999999999999)).toBeNull();
+      expect(helloStateJsonOffsets.getStateNameFromOffset(999999)).toBeNull();
       expect(() => {
         helloStateJsonOffsets.getStateNameFromOffset(100);
       }).not.toThrowError();
@@ -139,14 +146,16 @@ describe("SwfJsonOffsets tests", () => {
     });
 
     it.each([
-      ["helloState.sw.json", 161, "Hello State"],
-      ["helloState.sw.json", 300, "Hello State Two"],
-      ["greeting.sw.json", 860, "GreetInEnglish"],
-      ["greeting.sw.json", 1360, "GetGreeting"],
-    ])('On file %s, with offset %d should return state name "%s"', (fileName, offset, expectedStateName) => {
+      ["helloState.sw.json", "Hello State"],
+      ["helloState.sw.json", "Hello State Two"],
+      ["greeting.sw.json", "GreetInEnglish"],
+      ["greeting.sw.json", "GetGreeting"],
+    ])('On file %s, with offset %d should return state name "%s"', (fileName, stateName) => {
       const fullText = allInputFilesFullText.get(fileName)!;
       const swfJsonOffsets = new SwfJsonOffsets(fullText);
-      expect(swfJsonOffsets.getStateNameFromOffset(offset)).toBe(expectedStateName);
+      const offset = swfJsonOffsets.getStateNameOffset(stateName);
+
+      expect(swfJsonOffsets.getStateNameFromOffset(offset + 50)).toBe(stateName);
     });
   });
 });

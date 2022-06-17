@@ -54,3 +54,4 @@ export const getFileLanguage = (fileName: string): FileLanguage | null => {
 };
 
 export * from "./SwfJsonOffsets";
+export * from "./SwfYamlOffsets";

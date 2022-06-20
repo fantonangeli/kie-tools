@@ -15,8 +15,12 @@
  */
 
 import { editor, KeyCode, KeyMod } from "monaco-editor";
-import { SwfLanguageServiceCommandIds } from "@kie-tools/serverless-workflow-language-service/dist/api";
-import { FileLanguage } from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import { SwfLanguageServiceCommandIds, SwfOffsetsApi } from "@kie-tools/serverless-workflow-language-service/dist/api";
+import {
+  FileLanguage,
+  SwfJsonOffsets,
+  SwfYamlOffsets,
+} from "@kie-tools/serverless-workflow-language-service/dist/editor";
 import { initJsonSchemaDiagnostics } from "./augmentation/language/json";
 import { initYamlSchemaDiagnostics } from "./augmentation/language/yaml";
 import { OperatingSystem } from "@kie-tools-core/operating-system";
@@ -34,6 +38,7 @@ export interface SwfTextEditorApi {
   setTheme: (theme: EditorTheme) => void;
   forceRedraw: () => void;
   dispose: () => void;
+  moveCursorToNode: (nodeName: string) => void;
 }
 
 export enum SwfTextEditorOperation {
@@ -52,6 +57,8 @@ export class SwfTextEditorController implements SwfTextEditorApi {
 
   public editor: editor.IStandaloneCodeEditor | undefined;
 
+  private swfOffsetsApi: SwfOffsetsApi | undefined;
+
   constructor(
     content: string,
     private readonly onContentChange: (content: string, operation: SwfTextEditorOperation) => void,
@@ -65,6 +72,7 @@ export class SwfTextEditorController implements SwfTextEditorApi {
       if (!event.isUndoing && !event.isRedoing) {
         this.editor?.pushUndoStop();
         onContentChange(this.model.getValue(), SwfTextEditorOperation.EDIT);
+        this.swfOffsetsApi = undefined;
       }
     });
 
@@ -133,6 +141,35 @@ export class SwfTextEditorController implements SwfTextEditorApi {
 
   public forceRedraw() {
     this.editor?.render(true);
+  }
+
+  /**
+   * Moves the cursor to a specified node by node name.
+   *
+   * @param nodeName -
+   * @returns
+   */
+  public moveCursorToNode(nodeName: string): void {
+    if (!this.editor || !nodeName) {
+      return;
+    }
+
+    if (!this.swfOffsetsApi) {
+      this.swfOffsetsApi =
+        this.language === FileLanguage.JSON
+          ? new SwfJsonOffsets(this.getContent())
+          : new SwfYamlOffsets(this.getContent());
+    }
+
+    const targetOffset = this.swfOffsetsApi.getStateNameOffset(nodeName);
+    const targetPosition = this.editor?.getModel()?.getPositionAt(targetOffset);
+
+    if (!targetPosition) {
+      return;
+    }
+
+    this.editor?.revealLineInCenter(targetPosition.lineNumber);
+    this.editor?.setPosition(targetPosition);
   }
 
   private getMonacoThemeByEditorTheme(theme?: EditorTheme): string {

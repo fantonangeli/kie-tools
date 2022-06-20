@@ -155,13 +155,6 @@ export class SwfTextEditorController implements SwfTextEditorApi {
       return;
     }
 
-    // if (!this.swfOffsetsApi) {
-    //   this.swfOffsetsApi =
-    //     this.language === FileLanguage.JSON
-    //       ? new SwfJsonOffsets(this.getContent())
-    //       : new SwfYamlOffsets(this.getContent());
-    // }
-
     this.swfOffsetsApi.parseContent(this.getContent());
 
     const targetOffset = this.swfOffsetsApi.getStateNameOffset(nodeName);

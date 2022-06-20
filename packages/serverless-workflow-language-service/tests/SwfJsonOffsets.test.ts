@@ -79,7 +79,7 @@ describe("SwfJsonOffsets tests", () => {
   });
 
   describe("getAllOffsets", () => {
-    it("Should return {} with wrong inputs", () => {
+    it("Should return an empty offsets object with wrong inputs", () => {
       const emptyOffsets = { states: {} };
       // @ts-ignore
       expect(swfJsonOffsets.parseContent(null).getAllOffsets()).toStrictEqual(emptyOffsets);

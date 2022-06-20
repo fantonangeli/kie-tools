@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-import { safeLoad as loadYaml } from "yaml-language-server-parser";
-import * as jsonParse from "json-to-ast";
-
 /**
  * File language for an opened file in the text editor.
  */

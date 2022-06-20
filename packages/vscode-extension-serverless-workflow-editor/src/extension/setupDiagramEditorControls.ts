@@ -27,7 +27,8 @@ import {
   SwfJsonOffsets,
   SwfYamlOffsets,
 } from "@kie-tools/serverless-workflow-language-service/dist/editor";
-import { FileLanguage, SwfOffsetsApi } from "@kie-tools/serverless-workflow-language-service/dist/api";
+import { FileLanguage } from "@kie-tools/serverless-workflow-language-service/dist/editor";
+import { SwfOffsetsApi } from "@kie-tools/serverless-workflow-language-service/dist/api";
 
 let swfOffsetsApi: SwfOffsetsApi | undefined = undefined;
 

@@ -29,7 +29,6 @@ import {
 } from "@kie-tools/serverless-workflow-language-service/dist/editor";
 import { FileLanguage, SwfOffsetsApi } from "@kie-tools/serverless-workflow-language-service/dist/api";
 
-let oldTextEditorContent: string | null = null;
 let swfOffsetsApi: SwfOffsetsApi | undefined = undefined;
 
 function isSwf(textDocument: vscode.TextDocument) {
@@ -147,12 +146,11 @@ export async function setupDiagramEditorControls(args: {
 
         const editorContent = textEditor.document.getText();
 
-        //check if the text editor content has been updated
-        if (!oldTextEditorContent || !swfOffsetsApi || editorContent !== oldTextEditorContent) {
-          oldTextEditorContent = editorContent;
-          swfOffsetsApi =
-            fileLanguage === FileLanguage.JSON ? new SwfJsonOffsets(editorContent) : new SwfYamlOffsets(editorContent);
+        if (!swfOffsetsApi) {
+          swfOffsetsApi = fileLanguage === FileLanguage.JSON ? new SwfJsonOffsets() : new SwfYamlOffsets();
         }
+
+        swfOffsetsApi.parseContent(editorContent);
 
         const targetOffset = swfOffsetsApi.getStateNameOffset(nodeName);
 

@@ -57,7 +57,7 @@ export class SwfTextEditorController implements SwfTextEditorApi {
 
   public editor: editor.IStandaloneCodeEditor | undefined;
 
-  private swfOffsetsApi: SwfOffsetsApi | undefined;
+  private swfOffsetsApi: SwfOffsetsApi;
 
   constructor(
     content: string,
@@ -72,13 +72,14 @@ export class SwfTextEditorController implements SwfTextEditorApi {
       if (!event.isUndoing && !event.isRedoing) {
         this.editor?.pushUndoStop();
         onContentChange(this.model.getValue(), SwfTextEditorOperation.EDIT);
-        this.swfOffsetsApi = undefined;
       }
     });
 
     editor.onDidChangeMarkers(() => {
       this.setValidationErrors(this.getValidationMarkers());
     });
+
+    this.swfOffsetsApi = this.language === FileLanguage.JSON ? new SwfJsonOffsets() : new SwfYamlOffsets();
   }
 
   public redo(): void {
@@ -154,12 +155,14 @@ export class SwfTextEditorController implements SwfTextEditorApi {
       return;
     }
 
-    if (!this.swfOffsetsApi) {
-      this.swfOffsetsApi =
-        this.language === FileLanguage.JSON
-          ? new SwfJsonOffsets(this.getContent())
-          : new SwfYamlOffsets(this.getContent());
-    }
+    // if (!this.swfOffsetsApi) {
+    //   this.swfOffsetsApi =
+    //     this.language === FileLanguage.JSON
+    //       ? new SwfJsonOffsets(this.getContent())
+    //       : new SwfYamlOffsets(this.getContent());
+    // }
+
+    this.swfOffsetsApi.parseContent(this.getContent());
 
     const targetOffset = this.swfOffsetsApi.getStateNameOffset(nodeName);
 

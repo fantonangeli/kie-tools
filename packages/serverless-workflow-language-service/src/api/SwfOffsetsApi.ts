@@ -15,54 +15,57 @@
  */
 import * as jsonata from "jsonata";
 
-/**
- * File language for an opened file in the text editor.
- */
-export enum FileLanguage {
-  JSON = "json",
-  YAML = "yaml",
-}
-
-/**
- * Position with coordinates in a text editor.
- */
-export type Position = {
-  line: number;
-  character: number;
-};
-
-export interface StateBlockOffset {
+export type StateBlockOffset = {
   start: number;
   end: number;
-}
+};
 
-export interface StateOffsets {
+export type StateOffsets = {
   stateNameOffset: number;
   offset: StateBlockOffset;
-}
+};
 
-export interface StatesOffsets {
+export type StatesOffsets = {
   [key: string]: StateOffsets;
-}
+};
 
 /**
- * interface for the object with the coordinates of the full document
+ * type for the object with the coordinates of the full document
  */
-export interface FullTextOffsets {
+export type FullTextOffsets = {
   states: StatesOffsets;
-}
+};
 
 /**
  * Api to work with offsets
  */
 export abstract class SwfOffsetsApi {
-  protected fullTextOffsets: FullTextOffsets;
+  protected fullText: string;
+  protected fullTextOffsets: FullTextOffsets | undefined;
 
-  constructor(protected fullText: string, protected astTransformQuery: string) {
+  constructor(protected astTransformQuery: string) {}
+
+  /**
+   * Parses the content of a file
+   *
+   * @param fullText -
+   * @returns this for chaining
+   */
+  parseContent(fullText: string): SwfOffsetsApi {
     if (!fullText) {
-      return;
+      this.fullText = "";
+      this.fullTextOffsets = undefined;
+      return this;
     }
+
+    if (this.fullText === fullText) {
+      return this;
+    }
+
+    this.fullText = fullText;
     this.fullTextOffsets = this.getAllOffsets();
+
+    return this;
   }
 
   /**
@@ -119,7 +122,7 @@ export abstract class SwfOffsetsApi {
     }
 
     for (const stateName in this.fullTextOffsets?.states) {
-      const blockOffset = this.fullTextOffsets.states[stateName].offset;
+      const blockOffset = this.fullTextOffsets!.states[stateName].offset;
       if (offset >= blockOffset.start && offset <= blockOffset.end) {
         return stateName;
       }

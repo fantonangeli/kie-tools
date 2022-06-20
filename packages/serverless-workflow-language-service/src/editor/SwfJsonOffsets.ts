@@ -31,8 +31,8 @@ const astTransformQuery = `children[key.value='states'].value.children {
 `;
 
 export class SwfJsonOffsets extends SwfOffsetsApi {
-  constructor(fullText: string) {
-    super(fullText, astTransformQuery);
+  constructor() {
+    super(astTransformQuery);
   }
 
   getFullAST(): any {

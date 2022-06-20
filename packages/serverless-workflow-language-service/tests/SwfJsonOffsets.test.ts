@@ -19,24 +19,60 @@ import { SwfJsonOffsets } from "@kie-tools/serverless-workflow-language-service/
 import { getLineFromOffset } from "./testUtils";
 
 describe("SwfJsonOffsets tests", () => {
+  const swfJsonOffsets = new SwfJsonOffsets();
   const inputFilesBasePath = path.join("tests", "inputFiles", "json") + "/";
   const allInputFiles = [["helloState.sw.json"], ["greeting.sw.json"], ["greeting-long.sw.json"]];
   const allInputFilesFullText = new Map(
     allInputFiles.map((item) => [item[0], fs.readFileSync(inputFilesBasePath + item[0], "utf8").toString()])
   );
 
+  describe("parseContent", () => {
+    let getAllOffsetsSpy: any;
+
+    beforeEach(() => {
+      getAllOffsetsSpy = jest.spyOn(swfJsonOffsets, "getAllOffsets");
+    });
+
+    it("should not call getAllOffsets() with wrong inputs", () => {
+      // @ts-ignore
+      swfJsonOffsets.parseContent(null);
+      expect(getAllOffsetsSpy).not.toHaveBeenCalled();
+
+      // @ts-ignore
+      swfJsonOffsets.parseContent();
+      expect(getAllOffsetsSpy).not.toHaveBeenCalled();
+
+      swfJsonOffsets.parseContent("");
+      expect(getAllOffsetsSpy).not.toHaveBeenCalled();
+    });
+
+    it("should call getAllOffsets() with good content", () => {
+      swfJsonOffsets.parseContent(allInputFilesFullText.get("helloState.sw.json")!);
+      expect(getAllOffsetsSpy).toHaveBeenCalled();
+    });
+
+    it("should not call getAllOffsets() with unchanged content", () => {
+      swfJsonOffsets.parseContent(allInputFilesFullText.get("helloState.sw.json")!);
+      expect(getAllOffsetsSpy).not.toHaveBeenCalled();
+    });
+
+    afterEach(() => {
+      getAllOffsetsSpy.mockRestore();
+    });
+  });
+
   describe("getFullAST", () => {
     it("Should return null with wrong inputs", () => {
-      expect(new SwfJsonOffsets("").getFullAST()).toStrictEqual(null);
+      expect(swfJsonOffsets.parseContent("").getFullAST()).toStrictEqual(null);
       // @ts-ignore
-      expect(new SwfJsonOffsets(null).getFullAST()).toStrictEqual(null);
+      expect(swfJsonOffsets.parseContent(null).getFullAST()).toStrictEqual(null);
       // @ts-ignore
-      expect(new SwfJsonOffsets().getFullAST()).toStrictEqual(null);
-      expect(new SwfJsonOffsets('{"notValid":').getFullAST()).toStrictEqual(null);
+      expect(swfJsonOffsets.parseContent().getFullAST()).toStrictEqual(null);
+      expect(swfJsonOffsets.parseContent('{"notValid":').getFullAST()).toStrictEqual(null);
     });
 
     it.each(allInputFiles)("Should return a valid object parsing the input file %s", (fileName) => {
-      const swfJsonOffsets = new SwfJsonOffsets(allInputFilesFullText.get(fileName)!);
+      swfJsonOffsets.parseContent(allInputFilesFullText.get(fileName)!);
 
       expect(swfJsonOffsets.getFullAST()).toHaveProperty("children");
     });
@@ -46,17 +82,17 @@ describe("SwfJsonOffsets tests", () => {
     it("Should return {} with wrong inputs", () => {
       const emptyOffsets = { states: {} };
       // @ts-ignore
-      expect(new SwfJsonOffsets(null).getAllOffsets()).toStrictEqual(emptyOffsets);
+      expect(swfJsonOffsets.parseContent(null).getAllOffsets()).toStrictEqual(emptyOffsets);
       // @ts-ignore
-      expect(new SwfJsonOffsets().getAllOffsets()).toStrictEqual(emptyOffsets);
-      expect(new SwfJsonOffsets("").getAllOffsets()).toStrictEqual(emptyOffsets);
-      expect(new SwfJsonOffsets('{"notValid":').getAllOffsets()).toStrictEqual(emptyOffsets);
+      expect(swfJsonOffsets.parseContent().getAllOffsets()).toStrictEqual(emptyOffsets);
+      expect(swfJsonOffsets.parseContent("").getAllOffsets()).toStrictEqual(emptyOffsets);
+      expect(swfJsonOffsets.parseContent('{"notValid":').getAllOffsets()).toStrictEqual(emptyOffsets);
     });
 
     it("Should return a valid object parsing the input file 'helloState.sw.json'", () => {
       const fileName = "helloState.sw.json";
       const fullText = allInputFilesFullText.get(fileName)!;
-      const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
+      const offsets = swfJsonOffsets.parseContent(fullText).getAllOffsets();
 
       expect(getLineFromOffset(fullText, offsets.states["Hello State"].stateNameOffset)).toContain("Hello State");
       expect(getLineFromOffset(fullText, offsets.states["Hello State Two"].offset.start, 1)).toContain(
@@ -68,7 +104,7 @@ describe("SwfJsonOffsets tests", () => {
     it("Should return a valid object parsing the input file 'greeting.sw.json'", () => {
       const fileName = "greeting.sw.json";
       const fullText = allInputFilesFullText.get(fileName)!;
-      const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
+      const offsets = swfJsonOffsets.parseContent(fullText).getAllOffsets();
 
       expect(getLineFromOffset(fullText, offsets.states["GreetInEnglish"].stateNameOffset)).toContain("GreetInEnglish");
       expect(getLineFromOffset(fullText, offsets.states["GetGreeting"].offset.start, 1)).toContain("GetGreeting");
@@ -78,7 +114,7 @@ describe("SwfJsonOffsets tests", () => {
     it("Should return a valid object parsing the input file 'greeting-long.sw.json'", () => {
       const fileName = "greeting-long.sw.json";
       const fullText = allInputFilesFullText.get(fileName)!;
-      const offsets = new SwfJsonOffsets(fullText).getAllOffsets();
+      const offsets = swfJsonOffsets.parseContent(fullText).getAllOffsets();
 
       expect(getLineFromOffset(fullText, offsets.states["GreetInEnglish"].stateNameOffset)).toContain("GreetInEnglish");
       expect(getLineFromOffset(fullText, offsets.states["GreetInPortuguese 2"].offset.start, 1)).toContain(
@@ -90,10 +126,10 @@ describe("SwfJsonOffsets tests", () => {
 
   describe("getStateNameOffset", () => {
     const fullText = allInputFilesFullText.get("helloState.sw.json")!;
-    const helloStateJsonOffsets = new SwfJsonOffsets(fullText);
+    const helloStateJsonOffsets = swfJsonOffsets.parseContent(fullText);
 
     it("Should return -1 with wrong inputs", () => {
-      expect(new SwfJsonOffsets("").getStateNameOffset("Hello State")).toBe(-1);
+      expect(swfJsonOffsets.parseContent("").getStateNameOffset("Hello State")).toBe(-1);
       // @ts-ignore
       expect(helloStateJsonOffsets.getStateNameOffset()).toBe(-1);
       // @ts-ignore
@@ -117,7 +153,7 @@ describe("SwfJsonOffsets tests", () => {
       'On file %s, getStateNameOffset() with state name "%s" should return a correct offset',
       (fileName, stateName) => {
         const fullText = allInputFilesFullText.get(fileName)!;
-        const swfJsonOffsets = new SwfJsonOffsets(fullText);
+        swfJsonOffsets.parseContent(fullText);
         expect(getLineFromOffset(fullText, swfJsonOffsets.getStateNameOffset(stateName))).toContain(stateName);
       }
     );
@@ -125,10 +161,10 @@ describe("SwfJsonOffsets tests", () => {
 
   describe("getStateNameFromOffset", () => {
     const fullText = allInputFilesFullText.get("helloState.sw.json")!;
-    const helloStateJsonOffsets = new SwfJsonOffsets(fullText);
+    const helloStateJsonOffsets = swfJsonOffsets.parseContent(fullText);
 
     it("Should return null with wrong inputs", () => {
-      expect(new SwfJsonOffsets("").getStateNameFromOffset(-1)).toBeNull();
+      expect(swfJsonOffsets.parseContent("").getStateNameFromOffset(-1)).toBeNull();
       // @ts-ignore
       expect(helloStateJsonOffsets.getStateNameFromOffset()).toBeNull();
       // @ts-ignore
@@ -150,7 +186,7 @@ describe("SwfJsonOffsets tests", () => {
       ["greeting.sw.json", "GetGreeting"],
     ])('On file %s, with the offset of "%s" should return the correct state name', (fileName, stateName) => {
       const fullText = allInputFilesFullText.get(fileName)!;
-      const swfJsonOffsets = new SwfJsonOffsets(fullText);
+      swfJsonOffsets.parseContent(fullText);
       const offset = swfJsonOffsets.getStateNameOffset(stateName);
 
       expect(swfJsonOffsets.getStateNameFromOffset(offset + 50)).toBe(stateName);

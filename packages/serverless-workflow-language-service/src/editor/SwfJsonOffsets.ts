@@ -43,6 +43,7 @@ export class SwfJsonOffsets extends SwfOffsetsApi {
     try {
       return jsonParse(this.fullText);
     } catch (e) {
+      console.error(`Received an exeption parsing the content: ${e.message}`);
       return null;
     }
   }

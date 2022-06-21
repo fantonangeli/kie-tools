@@ -45,11 +45,12 @@ export class SwfYamlOffsets extends SwfOffsetsApi {
 
       // check if the yaml is not valid
       if (ast.errors && ast.errors.length) {
-        return null;
+        throw new Error(ast.errors[0].message);
       }
 
       return ast;
     } catch (e) {
+      console.error(`Received an exeption parsing the content: ${e.message}`);
       return null;
     }
   }

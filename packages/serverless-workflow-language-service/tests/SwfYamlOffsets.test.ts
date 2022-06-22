@@ -132,20 +132,20 @@ describe("SwfYamlOffsets tests", () => {
     const fullText = allInputFilesFullText.get("helloState.sw.yaml")!;
     const helloStateYamlOffsets = swfYamlOffsets.parseContent(fullText);
 
-    it("Should return -1 with wrong inputs", () => {
-      expect(swfYamlOffsets.parseContent("").getStateNameOffset("Hello State")).toBe(-1);
+    it("Should return undefined with wrong inputs", () => {
+      expect(swfYamlOffsets.parseContent("").getStateNameOffset("Hello State")).toBe(undefined);
       // @ts-ignore
-      expect(helloStateYamlOffsets.getStateNameOffset()).toBe(-1);
+      expect(helloStateYamlOffsets.getStateNameOffset()).toBe(undefined);
       // @ts-ignore
-      expect(helloStateYamlOffsets.getStateNameOffset(null)).toBe(-1);
-      expect(helloStateYamlOffsets.getStateNameOffset("")).toBe(-1);
+      expect(helloStateYamlOffsets.getStateNameOffset(null)).toBe(undefined);
+      expect(helloStateYamlOffsets.getStateNameOffset("")).toBe(undefined);
     });
 
-    it("Should return -1 if the state is not found", () => {
+    it("Should return undefined if the state is not found", () => {
       expect(() => {
         helloStateYamlOffsets.getStateNameOffset("Not a state");
       }).not.toThrowError();
-      expect(helloStateYamlOffsets.getStateNameOffset("Not a state")).toBe(-1);
+      expect(helloStateYamlOffsets.getStateNameOffset("Not a state")).toBe(undefined);
     });
 
     it.each([
@@ -193,7 +193,7 @@ describe("SwfYamlOffsets tests", () => {
       swfYamlOffsets.parseContent(fullText);
       const offset = swfYamlOffsets.getStateNameOffset(stateName);
 
-      expect(swfYamlOffsets.getStateNameFromOffset(offset + 50)).toBe(stateName);
+      expect(swfYamlOffsets.getStateNameFromOffset(offset! + 50)).toBe(stateName);
     });
   });
 });

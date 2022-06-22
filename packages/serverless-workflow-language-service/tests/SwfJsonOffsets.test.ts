@@ -128,20 +128,20 @@ describe("SwfJsonOffsets tests", () => {
     const fullText = allInputFilesFullText.get("helloState.sw.json")!;
     const helloStateJsonOffsets = swfJsonOffsets.parseContent(fullText);
 
-    it("Should return -1 with wrong inputs", () => {
-      expect(swfJsonOffsets.parseContent("").getStateNameOffset("Hello State")).toBe(-1);
+    it("Should return undefined with wrong inputs", () => {
+      expect(swfJsonOffsets.parseContent("").getStateNameOffset("Hello State")).toBe(undefined);
       // @ts-ignore
-      expect(helloStateJsonOffsets.getStateNameOffset()).toBe(-1);
+      expect(helloStateJsonOffsets.getStateNameOffset()).toBe(undefined);
       // @ts-ignore
-      expect(helloStateJsonOffsets.getStateNameOffset(null)).toBe(-1);
-      expect(helloStateJsonOffsets.getStateNameOffset("")).toBe(-1);
+      expect(helloStateJsonOffsets.getStateNameOffset(null)).toBe(undefined);
+      expect(helloStateJsonOffsets.getStateNameOffset("")).toBe(undefined);
     });
 
-    it("Should return -1 if the state is not found", () => {
+    it("Should return undefined if the state is not found", () => {
       expect(() => {
         helloStateJsonOffsets.getStateNameOffset("Not a state");
       }).not.toThrowError();
-      expect(helloStateJsonOffsets.getStateNameOffset("Not a state")).toBe(-1);
+      expect(helloStateJsonOffsets.getStateNameOffset("Not a state")).toBe(undefined);
     });
 
     it.each([
@@ -189,7 +189,7 @@ describe("SwfJsonOffsets tests", () => {
       swfJsonOffsets.parseContent(fullText);
       const offset = swfJsonOffsets.getStateNameOffset(stateName);
 
-      expect(swfJsonOffsets.getStateNameFromOffset(offset + 50)).toBe(stateName);
+      expect(swfJsonOffsets.getStateNameFromOffset(offset! + 50)).toBe(stateName);
     });
   });
 });

@@ -22,7 +22,7 @@
  * @param lineFrom if you want to get the next line set to 1
  * @returns only the line
  */
-export const getLineFromOffset = (fullText: string, offset: number, lineFrom = 0): string => {
-  const partialText = fullText.substring(offset);
+export const getLineFromOffset = (fullText: string, offset: number | undefined, lineFrom = 0): string => {
+  const partialText = fullText.substring(offset!);
   return partialText.substring(0).split("\n")[lineFrom];
 };

@@ -36,6 +36,8 @@ export class SwfYamlOffsets extends SwfOffsetsApi {
   }
 
   getFullAST(): any {
+    const errorLogMsg = (message: string) => `Received an exeption parsing the content: ${message}`;
+
     if (!this.fullText) {
       return null;
     }
@@ -45,12 +47,13 @@ export class SwfYamlOffsets extends SwfOffsetsApi {
 
       // check if the yaml is not valid
       if (ast.errors && ast.errors.length) {
-        throw new Error(ast.errors[0].message);
+        console.error(errorLogMsg(ast.errors[0].message));
+        return null;
       }
 
       return ast;
     } catch (e) {
-      console.error(`Received an exeption parsing the content: ${e.message}`);
+      console.error(errorLogMsg(e.message));
       return null;
     }
   }

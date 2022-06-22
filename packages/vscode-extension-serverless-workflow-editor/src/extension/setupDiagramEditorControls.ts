@@ -155,7 +155,7 @@ export async function setupDiagramEditorControls(args: {
 
         const targetOffset = swfOffsetsApi.getStateNameOffset(nodeName);
 
-        if (targetOffset < 0) {
+        if (!targetOffset) {
           return;
         }
 

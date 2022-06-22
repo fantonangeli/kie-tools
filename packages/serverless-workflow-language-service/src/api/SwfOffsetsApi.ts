@@ -102,12 +102,12 @@ export abstract class SwfOffsetsApi {
    * @param stateName
    * @returns the offset found, -1 otherwise
    */
-  getStateNameOffset(stateName: string): number {
+  getStateNameOffset(stateName: string): number | undefined {
     if (!stateName) {
-      return -1;
+      return undefined;
     }
 
-    return this.fullTextOffsets?.states[stateName]?.stateNameOffset || -1;
+    return this.fullTextOffsets?.states[stateName]?.stateNameOffset || undefined;
   }
 
   /**

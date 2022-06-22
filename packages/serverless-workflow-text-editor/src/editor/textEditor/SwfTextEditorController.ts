@@ -159,7 +159,7 @@ export class SwfTextEditorController implements SwfTextEditorApi {
 
     const targetOffset = this.swfOffsetsApi.getStateNameOffset(nodeName);
 
-    if (targetOffset < 0) {
+    if (!targetOffset) {
       return;
     }
 

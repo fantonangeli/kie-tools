@@ -65,7 +65,8 @@ export class SwfTextEditorController implements SwfTextEditorApi {
     private readonly language: FileLanguage,
     private readonly operatingSystem: OperatingSystem | undefined,
     private readonly isReadOnly: boolean,
-    private readonly setValidationErrors: (errors: editor.IMarker[]) => void
+    private readonly setValidationErrors: (errors: editor.IMarker[]) => void,
+    private readonly fileName: string = ""
   ) {
     this.model = editor.createModel(content, this.language);
     this.model.onDidChangeContent((event) => {

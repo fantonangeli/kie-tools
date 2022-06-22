@@ -43,7 +43,7 @@ export abstract class SwfOffsetsApi {
   protected fullText: string;
   protected fullTextOffsets: FullTextOffsets | undefined;
 
-  constructor(protected astTransformQuery: string) {}
+  constructor(protected astTransformQuery: string, public documentUri = "") {}
 
   /**
    * Parses the content of a file

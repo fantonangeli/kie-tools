@@ -31,8 +31,8 @@ const astTransformQuery = `mappings[key.value="states"].value.items{
 `;
 
 export class SwfYamlOffsets extends SwfOffsetsApi {
-  constructor() {
-    super(astTransformQuery);
+  constructor(documentUri?: string) {
+    super(astTransformQuery, documentUri);
   }
 
   getFullAST(): any {

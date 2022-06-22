@@ -148,7 +148,6 @@ export async function setupDiagramEditorControls(args: {
         const editorContent = textEditor.document.getText();
 
         if (!swfOffsetsApi || documentUri !== swfOffsetsApi.documentUri) {
-          console.log("swfOffsetsApi reinstance");
           swfOffsetsApi =
             fileLanguage === FileLanguage.JSON ? new SwfJsonOffsets(documentUri) : new SwfYamlOffsets(documentUri);
         }

@@ -1828,44 +1828,6 @@ states:
           insertTextFormat: InsertTextFormat.Snippet,
         } as CompletionItem);
       });
-
-      test.skip("using JSON format", async () => {
-        const { completionItems, cursorPosition } = await codeCompletionTester(
-          ls,
-          documentUri,
-          `---
-functions:
-- name: testRelativeFunction1
-  operation: specs/testRelativeService1.yml#testRelativeFunction1
-  type: rest
-states:
-- name: testState
-  type: operation
-  transition: end
-  actions:
-  - name: testStateAction
-    functionRef:
-      refName: testRelativeFunction1
-      arguments: {🎯}`
-        );
-
-        expect(completionItems).toHaveLength(1);
-        expect(completionItems[0]).toStrictEqual({
-          kind: CompletionItemKind.Module,
-          label: `'testRelativeFunction1' arguments`,
-          detail: "specs/testRelativeService1.yml#testRelativeFunction1",
-          sortText: `'testRelativeFunction1' arguments`,
-          textEdit: {
-            newText: `{
-  "argString": "\${1:}",
-  "argNumber": "\${2:}",
-  "argBoolean": "\${3:}"
-}`,
-            range: { start: cursorPosition, end: cursorPosition },
-          },
-          insertTextFormat: InsertTextFormat.Snippet,
-        } as CompletionItem);
-      });
     });
   });
 });

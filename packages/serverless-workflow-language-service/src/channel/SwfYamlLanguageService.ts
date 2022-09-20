@@ -60,7 +60,6 @@ export class SwfYamlLanguageService {
     return astConvert(ast);
   }
 
-  /* TODO: SwfYamlLanguageService: remove this from the class */
   /**
    * Check if a node at a position is uncompleted.
    * eg. "refName: 🎯"

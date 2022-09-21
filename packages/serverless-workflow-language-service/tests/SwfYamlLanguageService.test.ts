@@ -866,7 +866,7 @@ functions:
         expect(completionItems).toHaveLength(0);
       });
 
-      test.skip("using JSON format", async () => {
+      test("using JSON format", async () => {
         const { completionItems, cursorPosition } = await codeCompletionTester(
           ls,
           documentUri,
@@ -881,9 +881,11 @@ functions: [🎯]`
           detail: "specs/testRelativeService1.yml#testRelativeFunction1",
           textEdit: {
             range: { start: cursorPosition, end: cursorPosition },
-            newText: `name: '\${1:testRelativeFunction1}'
-  operation: 'specs/testRelativeService1.yml#testRelativeFunction1'
-  type: rest`,
+            newText: `{
+  "name": "\${1:testRelativeFunction1}",
+  "operation": "specs/testRelativeService1.yml#testRelativeFunction1",
+  "type": "rest"
+}`,
           },
           snippet: true,
           insertTextFormat: InsertTextFormat.Snippet,

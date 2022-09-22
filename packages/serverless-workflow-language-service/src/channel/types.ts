@@ -45,6 +45,8 @@ export interface ShouldCompleteArgs {
 export interface TranslateArgs {
   completion: object | string;
   completionItemKind: CompletionItemKind;
+  content: string;
+  currentNode: SwfLsNode | undefined;
   overwriteRange?: Range;
 }
 

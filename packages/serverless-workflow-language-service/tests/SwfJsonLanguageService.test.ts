@@ -522,7 +522,7 @@ describe("SWF LS JSON", () => {
   "name": "\${1:testRelativeFunction1}",
   "operation": "specs/testRelativeService1.yml#testRelativeFunction1",
   "type": "rest"
-},`,
+}`,
           },
           snippet: true,
           insertTextFormat: InsertTextFormat.Snippet,
@@ -567,7 +567,7 @@ describe("SWF LS JSON", () => {
   "name": "\${1:testRelativeFunction1}",
   "operation": "specs/testRelativeService1.yml#testRelativeFunction1",
   "type": "rest"
-},`,
+}`,
           },
           snippet: true,
           insertTextFormat: InsertTextFormat.Snippet,

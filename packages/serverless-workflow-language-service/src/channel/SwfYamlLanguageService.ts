@@ -28,6 +28,7 @@ import {
   YAMLSequence,
 } from "yaml-language-server-parser";
 import { FileLanguage } from "../api";
+import { getNodeFormat } from "./getNodeFormat";
 import { indentText } from "./indentText";
 import { matchNodeWithLocation } from "./matchNodeWithLocation";
 import { findNodeAtOffset, SwfLanguageService, SwfLanguageServiceArgs } from "./SwfLanguageService";
@@ -178,6 +179,14 @@ export class YamlCodeCompletionStrategy implements CodeCompletionStrategy {
 
     if (["{}", "[]"].includes(completionDump)) {
       return completionDump;
+    }
+
+    if (
+      args.currentNode &&
+      ["array", "object"].includes(args.currentNode.type) &&
+      getNodeFormat(args.content, args.currentNode) === FileLanguage.JSON
+    ) {
+      return indentText(JSON.stringify(args.completion, null, 2), 2, " ");
     }
 
     const skipFirstLineIndent = args.completionItemKind !== CompletionItemKind.Module;

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 import {
-  findNodeAtOffset,
   findNodesAtLocation,
-  SwfYamlLanguageService,
   SwfJsonLanguageService,
+  SwfYamlLanguageService,
 } from "@kie-tools/serverless-workflow-language-service/dist/channel";
 import { defaultConfig, defaultServiceCatalogConfig } from "./SwfLanguageServiceConfigs";
-import { treat } from "./testUtils";
 
 describe("findNodesAtLocation", () => {
   describe("JSON", () => {

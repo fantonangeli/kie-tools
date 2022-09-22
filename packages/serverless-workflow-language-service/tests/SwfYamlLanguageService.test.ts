@@ -854,14 +854,13 @@ functions: []
     });
 
     describe("function completion", () => {
-      test("empty completion items", async () => {
-        const { completionItems } = await codeCompletionTester(
-          ls,
-          documentUri,
-          `---
-functions:
--🎯`
-        );
+      test.each([
+        ["empty completion items", "functions:\n-🎯"],
+        ["pointing before the array of functions", `functions:🎯 [] `],
+        ["pointing before the array of functions / with extra space after ':'", `functions: 🎯 [] `],
+        ["pointing after the array of functions", `functions: []🎯 `],
+      ])("%s", async (_description, content) => {
+        let { completionItems } = await codeCompletionTester(ls, documentUri, content);
 
         expect(completionItems).toHaveLength(0);
       });
@@ -882,10 +881,104 @@ functions: [🎯]`
           textEdit: {
             range: { start: cursorPosition, end: cursorPosition },
             newText: `{
-  "name": "\${1:testRelativeFunction1}",
-  "operation": "specs/testRelativeService1.yml#testRelativeFunction1",
-  "type": "rest"
-}`,
+    "name": "\${1:testRelativeFunction1}",
+    "operation": "specs/testRelativeService1.yml#testRelativeFunction1",
+    "type": "rest"
+  }`,
+          },
+          snippet: true,
+          insertTextFormat: InsertTextFormat.Snippet,
+          command: {
+            command: "swf.ls.commands.ImportFunctionFromCompletionItem",
+            title: "Import function from completion item",
+            arguments: [
+              {
+                documentUri,
+                containingService: {
+                  ...testRelativeService1,
+                  functions: [
+                    {
+                      ...testRelativeFunction1,
+                      operation: "specs/testRelativeService1.yml#testRelativeFunction1",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        } as CompletionItem);
+      });
+
+      test("using JSON format / before a function", async () => {
+        const { completionItems, cursorPosition } = await codeCompletionTester(
+          ls,
+          documentUri,
+          `---
+functions: [🎯{
+      "name": "getGreetingFunction",
+      "operation": "openapi.yml#getGreeting"
+    }]`
+        );
+
+        expect(completionItems).toHaveLength(1);
+        expect(completionItems[0]).toStrictEqual({
+          kind: CompletionItemKind.Reference,
+          label: "specs»testRelativeService1.yml#testRelativeFunction1",
+          detail: "specs/testRelativeService1.yml#testRelativeFunction1",
+          textEdit: {
+            range: { start: cursorPosition, end: cursorPosition },
+            newText: `{
+    "name": "\${1:testRelativeFunction1}",
+    "operation": "specs/testRelativeService1.yml#testRelativeFunction1",
+    "type": "rest"
+  }`,
+          },
+          snippet: true,
+          insertTextFormat: InsertTextFormat.Snippet,
+          command: {
+            command: "swf.ls.commands.ImportFunctionFromCompletionItem",
+            title: "Import function from completion item",
+            arguments: [
+              {
+                documentUri,
+                containingService: {
+                  ...testRelativeService1,
+                  functions: [
+                    {
+                      ...testRelativeFunction1,
+                      operation: "specs/testRelativeService1.yml#testRelativeFunction1",
+                    },
+                  ],
+                },
+              },
+            ],
+          },
+        } as CompletionItem);
+      });
+
+      test("using JSON format / after a function", async () => {
+        const { completionItems, cursorPosition } = await codeCompletionTester(
+          ls,
+          documentUri,
+          `---
+functions: [{
+      "name": "getGreetingFunction",
+      "operation": "openapi.yml#getGreeting"
+    },🎯]`
+        );
+
+        expect(completionItems).toHaveLength(1);
+        expect(completionItems[0]).toStrictEqual({
+          kind: CompletionItemKind.Reference,
+          label: "specs»testRelativeService1.yml#testRelativeFunction1",
+          detail: "specs/testRelativeService1.yml#testRelativeFunction1",
+          textEdit: {
+            range: { start: cursorPosition, end: cursorPosition },
+            newText: `{
+    "name": "\${1:testRelativeFunction1}",
+    "operation": "specs/testRelativeService1.yml#testRelativeFunction1",
+    "type": "rest"
+  }`,
           },
           snippet: true,
           insertTextFormat: InsertTextFormat.Snippet,

@@ -21,7 +21,7 @@ import {
   SwfYamlLanguageService,
 } from "@kie-tools/serverless-workflow-language-service/dist/channel";
 import { defaultConfig, defaultServiceCatalogConfig } from "./SwfLanguageServiceConfigs";
-import { treat } from "./testUtils";
+import { ContentWithCursor, treat } from "./testUtils";
 
 describe("matchNodeWithLocation", () => {
   describe("JSON", () => {
@@ -414,23 +414,49 @@ functions:
         serviceCatalog: defaultServiceCatalogConfig,
         config: defaultConfig,
       });
-      const { content, cursorOffset } = treat(`---
-functions:
-- 🎯`);
-      const root = ls.parseContent(content);
-      const node = findNodeAtOffset(root!, cursorOffset, true);
 
-      test("should not match functions with states", () => {
-        expect(matchNodeWithLocation(root!, node!, ["states", "*"])).toBeFalsy();
-        expect(matchNodeWithLocation(root!, node!, ["states"])).toBeFalsy();
+      test.each([
+        ["empty completion items", "functions:\n- 🎯", ["functions", "*"], true],
+        ["should not match functions with states", "functions:\n-🎯", ["states", "*"], false],
+        ["should not match functions with states", "functions:\n-🎯", ["states"], false],
+      ])("%s", async (_description, contentToParse: ContentWithCursor, path, expectation) => {
+        const { content, cursorOffset } = treat(contentToParse, false);
+        const root = ls.parseContent(content);
+        const node = findNodeAtOffset(root!, cursorOffset, true);
+
+        expect(matchNodeWithLocation(root!, node!, path)).toBe(expectation);
       });
 
-      test("with cursorOffset at the first function property against 'functions *' selector", () => {
-        expect(matchNodeWithLocation(root!, node!, ["functions", "*"])).toBeTruthy();
+      test.each([
+        ["pointing before the array of functions / using JSON format", `functions:🎯 [] `, ["functions", "*"], false],
+        [
+          "pointing before the array of functions / with extra space after ':' / using JSON format",
+          `functions: 🎯 [] `,
+          ["functions", "*"],
+          false,
+        ],
+        ["pointing after the array of functions / using JSON format", `functions: []🎯 `, ["functions", "*"], false],
+      ])("%s", async (_description, contentToParse: ContentWithCursor, path, expectation) => {
+        const { content, cursorOffset } = treat(contentToParse, false);
+        const root = ls.parseContent(content);
+        const node = findNodeAtOffset(root!, cursorOffset, false);
+
+        expect(matchNodeWithLocation(root!, node!, path)).toBe(expectation);
       });
 
-      test.skip("with cursorOffset at the first function property against 'functions' selector", () => {
-        expect(matchNodeWithLocation(root!, node!, ["functions"])).toBeFalsy();
+      test.skip.each([
+        [
+          "with cursorOffset at the first function property against 'functions' selector",
+          "functions:\n-🎯",
+          ["functions"],
+          false,
+        ],
+      ])("%s", async (_description, contentToParse: ContentWithCursor, path, expectation) => {
+        const { content, cursorOffset } = treat(contentToParse, false);
+        const root = ls.parseContent(content);
+        const node = findNodeAtOffset(root!, cursorOffset, true);
+
+        expect(matchNodeWithLocation(root!, node!, path)).toBe(expectation);
       });
     });
   });

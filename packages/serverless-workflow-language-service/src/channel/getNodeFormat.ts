@@ -41,7 +41,7 @@ export function getNodeFormat(content: string, node: SwfLsNode): FileLanguage | 
     return getNodeFormat(content, node.parent);
   }
 
-  if (!yamlAST.errors.length) {
+  if (yamlAST && !yamlAST.errors.length) {
     return FileLanguage.YAML;
   }
 

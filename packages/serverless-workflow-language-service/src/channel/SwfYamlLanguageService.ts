@@ -31,7 +31,7 @@ import { FileLanguage } from "../api";
 import { getNodeFormat } from "./getNodeFormat";
 import { indentText } from "./indentText";
 import { matchNodeWithLocation } from "./matchNodeWithLocation";
-import { findNodeAtOffset, SwfLanguageService, SwfLanguageServiceArgs } from "./SwfLanguageService";
+import { findNodeAtLocation, findNodeAtOffset, SwfLanguageService, SwfLanguageServiceArgs } from "./SwfLanguageService";
 import { CodeCompletionStrategy, ShouldCompleteArgs, SwfLsNode, TranslateArgs } from "./types";
 
 export class SwfYamlLanguageService {
@@ -99,8 +99,8 @@ export class SwfYamlLanguageService {
 
     if (
       !rootNode ||
-      args.content.slice(cursorOffset - 1, cursorOffset) === ":" ||
-      args.content.slice(cursorOffset - 1, cursorOffset) === "-"
+      [":", "-", "]"].includes(args.content.slice(cursorOffset - 1, cursorOffset)) ||
+      args.content.slice(cursorOffset, cursorOffset + 1) === "["
     ) {
       return [];
     }
@@ -223,6 +223,19 @@ export class YamlCodeCompletionStrategy implements CodeCompletionStrategy {
   }
 
   public shouldComplete(args: ShouldCompleteArgs): boolean {
+    if (!args.root || !args.node) {
+      return false;
+    }
+
+    const isOffsetOnBoundaries =
+      args.node.offset + args.node.length === args.cursorOffset || args.node.offset === args.cursorOffset;
+    const isJsonFormat = getNodeFormat(args.content, args.node) === FileLanguage.JSON;
+    const starSelector = args.path[args.path.length - 1] === "*";
+
+    if (starSelector && args.node.type !== "array" && !isOffsetOnBoundaries && isJsonFormat) {
+      return false;
+    }
+
     return matchNodeWithLocation(args.root, args.node, args.path);
   }
 }

@@ -34,20 +34,20 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.apache.kie.sonataflow</groupId>
-  <artifactId>sonataflow-quarkus-devui-parent</artifactId>
+  <groupId>org.jbpm</groupId>
+  <artifactId>jbpm-quarkus-devui-parent</artifactId>
 
-  <name>KIE Tools :: SonataFlow Quarkus Dev UI Extension</name>
+  <name>KIE Tools :: jBPM Quarkus Dev UI Extension</name>
 
   <packaging>pom</packaging>
 
   <properties>
-    <java.module.name>org.kie.kogito.quarkus.swf.dev.ui</java.module.name>
+    <java.module.name>org.jbpm.quarkus.dev.ui</java.module.name>
   </properties>
 
   <modules>
-    <module>sonataflow-quarkus-devui-deployment</module>
-    <module>sonataflow-quarkus-devui</module>
+    <module>jbpm-quarkus-devui-runtime</module>
+    <module>jbpm-quarkus-devui-deployment</module>
   </modules>
 
   <build>
@@ -78,32 +78,5 @@
         </plugin>
       </plugins>
     </pluginManagement>
-
-    <plugins>
-      <plugin>
-        <groupId>com.github.eirslett</groupId>
-        <artifactId>frontend-maven-plugin</artifactId>
-        <inherited>false</inherited>
-        <configuration>
-          <workingDirectory>../../</workingDirectory>
-        </configuration>
-        <executions>
-          <execution>
-            <id>pnpm build:prod</id>
-            <goals>
-              <goal>pnpm</goal>
-            </goals>
-            <configuration>
-              <skip>${skip.ui.build}</skip>
-              <arguments>-F serverless-workflow-dev-ui-webapp... build:prod</arguments>
-              <environmentVariables>
-                <KIE_TOOLS_BUILD__runTests>false</KIE_TOOLS_BUILD__runTests>
-                <KIE_TOOLS_BUILD__runIntegrationTests>false</KIE_TOOLS_BUILD__runIntegrationTests>
-              </environmentVariables>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
   </build>
 </project>

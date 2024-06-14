@@ -316,9 +316,11 @@ packages/scesim-marshaller/**/ts-gen
 !packages/sonataflow-image-common/resources/**/build
 !packages/sonataflow-builder-image/resources/**/build
 !packages/sonataflow-devmode-image/resources/**/build
+!packages/sonataflow-management-console-image/resources/**/build
 !packages/sonataflow-image-common/test-resources/
 !packages/sonataflow-builder-image/test-resources/
 !packages/sonataflow-devmode-image/test-resources/
+!packages/sonataflow-management-console-image/test-resources/
 
 __pycache__
 packages/python-venv/venv

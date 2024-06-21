@@ -184,6 +184,7 @@
       { "id": "@kie-tools/serverless-workflow-service-catalog" },
       { "id": "swf-vscode-extension" },
       { "id": "@kie-tools/sonataflow-management-console-image" },
+      { "id": "@kie-tools/sonataflow-management-console-quarkus" },
       { "id": "@kie-tools/sonataflow-management-console-webapp" },
       { "id": "vscode-extension-dashbuilder-editor" },
       { "id": "vscode-extension-kie-ba-bundle" },
@@ -1189,7 +1190,17 @@
       },
       {
         "source": "@kie-tools/sonataflow-management-console-image",
+        "target": "@kie-tools/sonataflow-management-console-quarkus",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/sonataflow-management-console-image",
         "target": "@kie-tools/sonataflow-quarkus-devui",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/sonataflow-management-console-quarkus",
+        "target": "@kie-tools/sonataflow-management-console-webapp",
         "weight": 1
       },
       {
@@ -1422,6 +1433,7 @@
     ["@kie-tools/sonataflow-devmode-image", "packages/sonataflow-devmode-image"],
     ["@kie-tools/sonataflow-image-common", "packages/sonataflow-image-common"],
     ["@kie-tools/sonataflow-management-console-image", "packages/sonataflow-management-console-image"],
+    ["@kie-tools/sonataflow-management-console-quarkus", "packages/sonataflow-management-console-quarkus"],
     ["@kie-tools/sonataflow-management-console-webapp", "packages/sonataflow-management-console-webapp"],
     ["@kie-tools/sonataflow-mock-server", "packages/sonataflow-mock-server"],
     ["@kie-tools/sonataflow-operator", "packages/sonataflow-operator"],

@@ -234,6 +234,7 @@
       { "id": "@kie-tools/sonataflow-management-console-image" },
       { "id": "@kie-tools/sonataflow-management-console-image-env" },
       { "id": "@kie-tools/sonataflow-management-console-webapp" },
+      { "id": "@kie-tools/sonataflow-openshift-plugin" },
       { "id": "vscode-extension-dashbuilder-editor" },
       { "id": "vscode-extension-kie-ba-bundle" },
       { "id": "vscode-extension-kogito-bundle" },
@@ -2603,6 +2604,16 @@
         "weight": 1
       },
       {
+        "source": "@kie-tools/sonataflow-openshift-plugin",
+        "target": "@kie-tools-core/react-hooks",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/sonataflow-openshift-plugin",
+        "target": "@kie-tools/serverless-workflow-combined-editor",
+        "weight": 1
+      },
+      {
         "source": "vscode-extension-dashbuilder-editor",
         "target": "@kie-tools-core/vscode-extension",
         "weight": 1
@@ -2919,6 +2930,7 @@
     ["@kie-tools/sonataflow-management-console-image", "packages/sonataflow-management-console-image"],
     ["@kie-tools/sonataflow-management-console-image-env", "packages/sonataflow-management-console-image-env"],
     ["@kie-tools/sonataflow-management-console-webapp", "packages/sonataflow-management-console-webapp"],
+    ["@kie-tools/sonataflow-openshift-plugin", "packages/sonataflow-openshift-plugin"],
     ["@kie-tools/sonataflow-operator", "packages/sonataflow-operator"],
     ["@kie-tools/sonataflow-quarkus-devui", "packages/sonataflow-quarkus-devui"],
     ["@kie-tools/storybook-base", "packages/storybook-base"],

@@ -201,6 +201,7 @@ digraph G {
   "@kie-tools/sonataflow-management-console-image" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kie-tools/sonataflow-management-console-image-env" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kie-tools/sonataflow-management-console-webapp" [ color = "blue", fontcolor = "blue", style = "rounded" ];
+  "@kie-tools/sonataflow-openshift-plugin" [ color = "black", fontcolor = "black", style = "dashed, rounded" ];
   "@kie-tools/stunner-editors-dmn-loader" [ color = "blue", fontcolor = "blue", style = "rounded" ];
   "@kie-tools/unitables" [ color = "blue", fontcolor = "blue", style = "rounded" ];
   "vscode-extension-dashbuilder-editor" [ color = "blue", fontcolor = "blue", style = "rounded" ];
@@ -630,6 +631,8 @@ digraph G {
   "@kie-tools/sonataflow-management-console-webapp" -> "@kie-tools/runtime-tools-shared-webapp-components" [ style = "solid", color = "blue" ];
   "@kie-tools/sonataflow-management-console-webapp" -> "@kie-tools/runtime-tools-swf-webapp-components" [ style = "solid", color = "blue" ];
   "@kie-tools/sonataflow-management-console-webapp" -> "@kie-tools/sonataflow-dev-app" [ style = "dashed", color = "blue" ];
+  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools-core/react-hooks" [ style = "dashed", color = "black" ];
+  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools/serverless-workflow-combined-editor" [ style = "dashed", color = "black" ];
   "@kie-tools/sonataflow-operator" -> "@kie-tools/sonataflow-builder-image" [ style = "dashed", color = "black" ];
   "@kie-tools/sonataflow-operator" -> "@kie-tools/sonataflow-devmode-image" [ style = "dashed", color = "black" ];
   "@kie-tools/sonataflow-operator" -> "@kie/kogito-data-index-ephemeral-image" [ style = "dashed", color = "black" ];

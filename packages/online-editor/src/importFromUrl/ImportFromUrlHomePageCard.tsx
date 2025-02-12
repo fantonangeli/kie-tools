@@ -173,13 +173,7 @@ export function ImportFromUrlCard() {
           </TextContent>
           <br />
           <Form onSubmit={onSubmit}>
-            <FormGroup
-              // helperTextInvalid={validation.helperTextInvalid}
-              // helperText={validation.helperText}
-              // helperTextInvalidIcon={<ExclamationCircleIcon />}
-              // validated={validation.option}
-              fieldId="url"
-            >
+            <FormGroup fieldId="url">
               <TextInput
                 id={"url"}
                 ouiaId={"import-from-url-input"}
@@ -190,12 +184,12 @@ export function ImportFromUrlCard() {
                 onChange={(_event, val) => setUrl(val)}
               />
               <HelperText>
-                {validation.helperTextInvalid === "error" ? (
+                {validation.option === "error" ? (
                   <HelperTextItem variant="error" icon={<ExclamationCircleIcon />}>
-                    {validation.helperText}
+                    {validation.helperTextInvalid}
                   </HelperTextItem>
                 ) : (
-                  <HelperTextItem icon={ValidatedOptions.success}>{validation.option}</HelperTextItem>
+                  validation.helperText
                 )}
               </HelperText>
             </FormGroup>

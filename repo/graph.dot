@@ -631,8 +631,11 @@ digraph G {
   "@kie-tools/sonataflow-management-console-webapp" -> "@kie-tools/runtime-tools-shared-webapp-components" [ style = "solid", color = "blue" ];
   "@kie-tools/sonataflow-management-console-webapp" -> "@kie-tools/runtime-tools-swf-webapp-components" [ style = "solid", color = "blue" ];
   "@kie-tools/sonataflow-management-console-webapp" -> "@kie-tools/sonataflow-dev-app" [ style = "dashed", color = "blue" ];
-  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools-core/react-hooks" [ style = "dashed", color = "black" ];
-  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools/serverless-workflow-combined-editor" [ style = "dashed", color = "black" ];
+  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools-core/react-hooks" [ style = "solid", color = "black" ];
+  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools/runtime-tools-process-webapp-components" [ style = "solid", color = "black" ];
+  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools/runtime-tools-shared-webapp-components" [ style = "solid", color = "black" ];
+  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools/runtime-tools-swf-webapp-components" [ style = "solid", color = "black" ];
+  "@kie-tools/sonataflow-openshift-plugin" -> "@kie-tools/serverless-workflow-standalone-editor" [ style = "dashed", color = "black" ];
   "@kie-tools/sonataflow-operator" -> "@kie-tools/sonataflow-builder-image" [ style = "dashed", color = "black" ];
   "@kie-tools/sonataflow-operator" -> "@kie-tools/sonataflow-devmode-image" [ style = "dashed", color = "black" ];
   "@kie-tools/sonataflow-operator" -> "@kie/kogito-data-index-ephemeral-image" [ style = "dashed", color = "black" ];

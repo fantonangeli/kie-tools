@@ -16,5 +16,23 @@
       "perspective": "admin",
       "section": "home"
     }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "exact": true,
+      "path": "/editor_page",
+      "component": { "$codeRef": "EditorPage" }
+    }
+  },
+  {
+    "type": "console.navigation/href",
+    "properties": {
+      "id": "editorPage",
+      "name": "%plugin__console-plugin-template~Editor Page%",
+      "href": "/editor_page",
+      "perspective": "admin",
+      "section": "home"
+    }
   }
 ]

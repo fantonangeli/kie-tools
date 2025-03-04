@@ -17,20 +17,4 @@
  * under the License.
  */
 
-const { varsWithName, composeEnv, getOrDefault } = require("@kie-tools-scripts/build-env");
-
-module.exports = composeEnv([require("@kie-tools/root-env/env")], {
-  vars: varsWithName({}),
-  get env() {
-    return {
-      sonataflowOpenshiftPlugin: {
-        plugin: {
-          port: 9001,
-        },
-        dev: {
-          port: 9002,
-        },
-      },
-    };
-  },
-});
+declare module "*.html";

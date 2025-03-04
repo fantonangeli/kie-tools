@@ -5,18 +5,15 @@
     "declarationMap": false,
     "esModuleInterop": true,
     "jsx": "react-jsx",
-    "noImplicitAny": false,
-    "noImplicitThis": true,
-    "strictNullChecks": false
+    "resolveJsonModule": true
   },
   "include": ["src"],
   "preserveSymlinks": true,
-
   "ts-node": {
-    "esm": true,
+    "files": true,
+    "transpileOnly": true,
     "compilerOptions": {
-      "esModuleInterop": true,
-      "module": "CommonJS"
+      "module": "commonjs"
     }
   }
 }

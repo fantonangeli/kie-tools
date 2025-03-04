@@ -17,20 +17,32 @@
  * under the License.
  */
 
-const { varsWithName, composeEnv, getOrDefault } = require("@kie-tools-scripts/build-env");
+const baseConfig = require("@kie-tools/eslint/.eslintrc.js");
 
-module.exports = composeEnv([require("@kie-tools/root-env/env")], {
-  vars: varsWithName({}),
-  get env() {
-    return {
-      sonataflowOpenshiftPlugin: {
-        plugin: {
-          port: 9001,
-        },
-        dev: {
-          port: 9002,
-        },
+module.exports = {
+  ...baseConfig,
+  overrides: [
+    ...baseConfig.overrides,
+    {
+      files: ["*.ts", "*.tsx"],
+      rules: {
+        "no-restricted-imports": [
+          "off",
+          {
+            paths: [
+              {
+                name: "@patternfly/react-core",
+                message: "Please use specific imports from @patternfly/react-core/dist/js/components/**)",
+              },
+              {
+                name: "@patternfly/react-icons",
+                message: "Please use specific imports from @patternfly/react-icons/dist/js/icons/**)",
+              },
+            ],
+            patterns: ["!@patternfly/react-core/dist/*", "!@patternfly/react-icons/dist/*"],
+          },
+        ],
       },
-    };
-  },
-});
+    },
+  ],
+};

@@ -17,20 +17,10 @@
  * under the License.
  */
 
-const { varsWithName, composeEnv, getOrDefault } = require("@kie-tools-scripts/build-env");
+import * as React from "react";
+import EditorPage from "../src/components/EditorPage/EditorPage";
+import ExamplePage from "../src/components/ExamplePage/ExamplePage";
 
-module.exports = composeEnv([require("@kie-tools/root-env/env")], {
-  vars: varsWithName({}),
-  get env() {
-    return {
-      sonataflowOpenshiftPlugin: {
-        plugin: {
-          port: 9001,
-        },
-        dev: {
-          port: 9002,
-        },
-      },
-    };
-  },
-});
+export const App = () => {
+  return <EditorPage />;
+};

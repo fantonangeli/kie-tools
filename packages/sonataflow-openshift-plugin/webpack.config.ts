@@ -55,18 +55,19 @@ export default async (webpackEnv: any, webpackArgv: any) => {
             os: require.resolve("os-browserify/browser"),
           },
           alias: {
-            "@patternfly/react-core/dist": "@patternfly/react-core",
+            // "@patternfly/react-core/dist": "@patternfly/react-core",
             prettier$: path.resolve(__dirname, "node_modules/prettier"),
             "prettier/parser-yaml": path.resolve(__dirname, "node_modules/prettier/plugins/yaml"),
             // "jsonc-parser": require.resolve("jsonc-parser"),
+            // // "./impl/*": path.resolve(__dirname, "node_modules/jsonc-parser/lib/esm/impl/*"),
+            // "jsonc-parser": require.resolve("jsonc-parser/lib/esm/main.js"),
             // "./impl/*": path.resolve(__dirname, "node_modules/jsonc-parser/lib/esm/impl/*"),
-            "jsonc-parser": require.resolve("jsonc-parser/lib/esm/main.js"),
-            "./impl/*": path.resolve(__dirname, "node_modules/jsonc-parser/lib/esm/impl/*"),
-            "vscode-json-languageservice/*": path.resolve(
-              __dirname,
-              "node_modules/vscode-json-languageservice/lib/esm/*"
-            ),
-
+            // "vscode-json-languageservice/*": path.resolve(
+            //   __dirname,
+            //   "node_modules/vscode-json-languageservice/lib/esm/*"
+            // ),
+            //
+            //
             "@kie-tools/runtime-tools-components/dist": "@kie-tools/runtime-tools-components/src/common",
             "@kie-tools-core/editor/dist": "@kie-tools-core/editor/src",
             "@kie-tools-core/envelope-bus/dist": "@kie-tools-core/envelope-bus/src",
@@ -80,14 +81,15 @@ export default async (webpackEnv: any, webpackArgv: any) => {
             "@kie-tools/serverless-workflow-jq-expressions/dist": "@kie-tools/serverless-workflow-jq-expressions/src",
             "@kie-tools/serverless-workflow-service-catalog/dist": "@kie-tools/serverless-workflow-service-catalog/src",
             "@kie-tools/yaml-language-server": "@kie-tools/yaml-language-server/src",
-            "!!raw-loader!../../dist/resources/swf/swfCombinedEditorEnvelopeIndex.html":
-              "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfCombinedEditorEnvelopeIndex.html",
 
-            "!!raw-loader!../../dist/resources/swf/swfDiagramEditorEnvelopeIndex.html":
-              "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfDiagramEditorEnvelopeIndex.html",
-
-            "!!raw-loader!../../dist/resources/swf/swfTextEditorEnvelopeIndex.html":
-              "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfTextEditorEnvelopeIndex.html",
+            // "!!raw-loader!../../dist/resources/swf/swfCombinedEditorEnvelopeIndex.html":
+            //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfCombinedEditorEnvelopeIndex.html",
+            //
+            // "!!raw-loader!../../dist/resources/swf/swfDiagramEditorEnvelopeIndex.html":
+            //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfDiagramEditorEnvelopeIndex.html",
+            //
+            // "!!raw-loader!../../dist/resources/swf/swfTextEditorEnvelopeIndex.html":
+            //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfTextEditorEnvelopeIndex.html",
           },
           extensions: [".tsx", ".ts", ".js", ".jsx"],
           modules: ["node_modules"],

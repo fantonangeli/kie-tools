@@ -34,37 +34,18 @@ module.exports = (webpackEnv) =>
     mode: "development",
     entry: {
       index: path.resolve(__dirname, "./index.tsx"),
-      // "serverless-workflow-text-editor-envelope": path.resolve(
-      //   __dirname,
-      //   "./envelope/ServerlessWorkflowTextEditorEnvelopeApp.ts"
-      // ),
-      // "serverless-workflow-diagram-editor-envelope": path.resolve(
-      //   __dirname,
-      //   "./envelope/ServerlessWorkflowDiagramEditorEnvelopeApp.ts"
-      // ),
-      // "serverless-workflow-combined-editor-envelope": path.resolve(
-      //   __dirname,
-      //   "./envelope/ServerlessWorkflowCombinedEditorEnvelopeApp.ts"
-      // ),
     },
     output: {
       path: path.resolve("../dist-dev"),
+      publicPath: "/",
     },
     resolve: {
       alias: {
-        "@patternfly/react-core/dist/*": path.resolve(__dirname, "../node_modules/@patternfly/react-core/src/*"),
+        // "@patternfly/react-core/dist": "@patternfly/react-core",
         prettier$: path.resolve(__dirname, "../node_modules/prettier"),
         "prettier/parser-yaml": path.resolve(__dirname, "../node_modules/prettier/plugins/yaml"),
-        "./impl/format": path.resolve(
-          "/home/fantonan/NotBackedUp/repos/kie-tools-k/packages/sonataflow-openshift-plugin/node_modules/jsonc-parser/lib/umd/main.js"
-        ),
-        "jsonc-parser": require.resolve("jsonc-parser"),
-        // "./impl/*": path.resolve(__dirname, "node_modules/jsonc-parser/lib/esm/impl/*"),
-        // "./impl/*": path.resolve(__dirname, "../node_modules/jsonc-parser/lib/esm/impl/*"),
-        "vscode-json-languageservice/*": path.resolve(
-          __dirname,
-          "../node_modules/vscode-json-languageservice/lib/esm/*"
-        ),
+        "jsonc-parser": "jsonc-parser",
+        "./impl/*": "jsonc-parser/lib/esm/impl/*",
 
         "@kie-tools/runtime-tools-components/dist": "@kie-tools/runtime-tools-components/src/common",
         "@kie-tools-core/editor/dist": "@kie-tools-core/editor/src",
@@ -77,58 +58,60 @@ module.exports = (webpackEnv) =>
         "@kie-tools/serverless-workflow-jq-expressions/dist": "@kie-tools/serverless-workflow-jq-expressions/src",
         "@kie-tools/serverless-workflow-service-catalog/dist": "@kie-tools/serverless-workflow-service-catalog/src",
         "@kie-tools/yaml-language-server": "@kie-tools/yaml-language-server/src",
-        "!!raw-loader!../../dist/resources/swf/swfCombinedEditorEnvelopeIndex.html":
-          "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfCombinedEditorEnvelopeIndex.html",
 
-        "!!raw-loader!../../dist/resources/swf/swfDiagramEditorEnvelopeIndex.html":
-          "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfDiagramEditorEnvelopeIndex.html",
-
-        "!!raw-loader!../../dist/resources/swf/swfTextEditorEnvelopeIndex.html":
-          "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfTextEditorEnvelopeIndex.html",
+        // "!!raw-loader!../../dist/resources/swf/swfCombinedEditorEnvelopeIndex.html":
+        //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfCombinedEditorEnvelopeIndex.html",
+        //
+        // "!!raw-loader!../../dist/resources/swf/swfDiagramEditorEnvelopeIndex.html":
+        //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfDiagramEditorEnvelopeIndex.html",
+        //
+        // "!!raw-loader!../../dist/resources/swf/swfTextEditorEnvelopeIndex.html":
+        //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfTextEditorEnvelopeIndex.html",
       },
+      extensions: [".js", ".json", ".ts"],
     },
     plugins: [
       new CopyPlugin({
         patterns: [
-          { from: path.resolve(__dirname, "./static/index.html"), to: "./index.html" },
-          {
-            from: swEditorAssets.swEditorPath(),
-            to: "./diagram",
-            globOptions: { ignore: ["**/WEB-INF/**/*", "**/*.html"] },
-          },
-          {
-            context: swEditorAssets.swEditorFontsPath(),
-            from: "fontawesome-webfont.*",
-            to: "./fonts",
-            force: true,
-          },
-          {
-            from: path.resolve(__dirname, "../resources/serverless-workflow-text-editor-envelope.html"),
-            to: "./serverless-workflow-text-editor-envelope.html",
-          },
-          {
-            from: path.resolve(__dirname, "../resources/serverless-workflow-diagram-editor-envelope.html"),
-            to: "./serverless-workflow-diagram-editor-envelope.html",
-          },
-          {
-            from: path.resolve(__dirname, "../resources/serverless-workflow-combined-editor-envelope.html"),
-            to: "./serverless-workflow-combined-editor-envelope.html",
-          },
+          { from: "./dev-webapp/static", to: "." },
+          // {
+          //   from: swEditorAssets.swEditorPath(),
+          //   to: "./diagram",
+          //   globOptions: { ignore: ["**/WEB-INF/**/*", "**/*.html"] },
+          // },
+          // {
+          //   context: swEditorAssets.swEditorFontsPath(),
+          //   from: "fontawesome-webfont.*",
+          //   to: "./fonts",
+          //   force: true,
+          // },
+          // {
+          //   from: path.resolve(__dirname, "../resources/serverless-workflow-text-editor-envelope.html"),
+          //   to: "./serverless-workflow-text-editor-envelope.html",
+          // },
+          // {
+          //   from: path.resolve(__dirname, "../resources/serverless-workflow-diagram-editor-envelope.html"),
+          //   to: "./serverless-workflow-diagram-editor-envelope.html",
+          // },
+          // {
+          //   from: path.resolve(__dirname, "../resources/serverless-workflow-combined-editor-envelope.html"),
+          //   to: "./serverless-workflow-combined-editor-envelope.html",
+          // },
         ],
       }),
-      new MonacoWebpackPlugin({
-        languages: ["json"],
-        customLanguages: [
-          {
-            label: "yaml",
-            entry: ["monaco-yaml", "vs/basic-languages/yaml/yaml.contribution"],
-            worker: {
-              id: "monaco-yaml/yamlWorker",
-              entry: "monaco-yaml/yaml.worker.js",
-            },
-          },
-        ],
-      }),
+      // new MonacoWebpackPlugin({
+      //   languages: ["json"],
+      //   customLanguages: [
+      //     {
+      //       label: "yaml",
+      //       entry: ["monaco-yaml", "vs/basic-languages/yaml/yaml.contribution"],
+      //       worker: {
+      //         id: "monaco-yaml/yamlWorker",
+      //         entry: "monaco-yaml/yaml.worker.js",
+      //       },
+      //     },
+      //   ],
+      // }),
     ],
     module: {
       rules: [...patternflyBase.webpackModuleRules],
@@ -136,7 +119,8 @@ module.exports = (webpackEnv) =>
     ignoreWarnings: [/Failed to parse source map/],
     devServer: {
       historyApiFallback: true,
-      static: [{ directory: path.join(__dirname) }],
+      // static: [{ directory: path.join(__dirname) }],
+      static: [{ directory: path.join(__dirname, "./dist") }, { directory: path.join(__dirname, "./static") }],
       compress: true,
       port: env.sonataflowOpenshiftPlugin.dev.port,
     },

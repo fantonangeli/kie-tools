@@ -34,10 +34,7 @@ import { Page, PageSection } from "@patternfly/react-core/dist/js/components/Pag
 import { basename, extname } from "path";
 import * as React from "react";
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
-// import * as greetingWF from "./jsongreet.sw.json";
 const greetingWF: any = require("./jsongreet.sw.json");
-
-// export type ServerlessWorkflowType = "json" | "yml" | "yaml";
 
 export default function EditorPage() {
   const swfEditorContainer = useRef<HTMLDivElement>(null);
@@ -63,7 +60,7 @@ export default function EditorPage() {
   }, []);
 
   useEffect(() => {
-    setContent("jsongreet.sw.json", greetingWF);
+    setContent("jsongreet.sw.json", JSON.stringify(greetingWF));
   }, [setContent]);
 
   useEffect(() => {

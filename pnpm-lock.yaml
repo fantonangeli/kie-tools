@@ -12961,6 +12961,9 @@ importers:
       '@kie-tools/serverless-workflow-text-editor':
         specifier: workspace:*
         version: link:../serverless-workflow-text-editor
+      '@kie-tools/yaml-language-server':
+        specifier: workspace:*
+        version: link:../yaml-language-server
       apollo-cache-inmemory:
         specifier: 1.6.6
         version: 1.6.6(graphql@14.3.1)
@@ -13012,6 +13015,9 @@ importers:
       vscode-json-languageservice:
         specifier: ^4.2.1
         version: 4.2.1
+      yaml-language-server:
+        specifier: ^1.10.0
+        version: 1.10.0
     devDependencies:
       '@cypress/webpack-preprocessor':
         specifier: ^5.15.5
@@ -13142,6 +13148,9 @@ importers:
       os-browserify:
         specifier: ^0.3.0
         version: 0.3.0
+      path-browserify:
+        specifier: ^1.0.1
+        version: 1.0.1
       prettier:
         specifier: ^3.3.2
         version: 3.3.2

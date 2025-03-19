@@ -19,7 +19,7 @@
     "none": "none",
     "start": "concurrently 'pnpm start:plugin' 'pnpm start:console'",
     "start:console": "run-script-os",
-    "start:console:linux:darwin": "./start-console.sh",
+    "start:console:linux:darwin": "export CONSOLE_PORT=$(build-env sonataflowOpenshiftPlugin.console.port); export PLUGIN_PORT=$(build-env sonataflowOpenshiftPlugin.plugin.port); ./start-console.sh",
     "start:console:win32": "echo \"start:console is not supported Windows\"",
     "start:dev-webapp": "webpack serve -c ./dev-webapp/webpack.config.js --host 0.0.0.0 --env dev",
     "start:plugin": "webpack serve --host 0.0.0.0 --env dev",
@@ -42,6 +42,7 @@
     "@kie-tools/serverless-workflow-diagram-editor-assets": "workspace:*",
     "@kie-tools/serverless-workflow-diagram-editor-envelope": "workspace:*",
     "@kie-tools/serverless-workflow-text-editor": "workspace:*",
+    "@kie-tools/yaml-language-server": "workspace:*",
     "apollo-cache-inmemory": "1.6.6",
     "apollo-client": "2.6.10",
     "apollo-link-context": "^1.0.20",
@@ -55,7 +56,8 @@
     "react-apollo-hooks": "^0.5.0",
     "react-router": "^5.3.4",
     "react-router-dom": "^5.3.4",
-    "vscode-json-languageservice": "^4.2.1"
+    "vscode-json-languageservice": "^4.2.1",
+    "yaml-language-server": "^1.10.0"
   },
   "devDependencies": {
     "@cypress/webpack-preprocessor": "^5.15.5",
@@ -102,6 +104,7 @@
     "monaco-editor-webpack-plugin": "^7.0.1",
     "node-polyfill-webpack-plugin": "^2.0.1",
     "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
     "prettier": "^3.3.2",
     "prettier-stylelint": "^0.4.2",
     "raw-loader": "^4.0.2",

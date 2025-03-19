@@ -20,6 +20,6 @@
 import "@patternfly/react-core/dist/styles/base.css";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import EditorPage from "../src/components/EditorPage/EditorPage";
+import EditorPage from "../../src/components/EditorPage/EditorPage";
 
 ReactDOM.render(<EditorPage />, document.getElementById("app")!);

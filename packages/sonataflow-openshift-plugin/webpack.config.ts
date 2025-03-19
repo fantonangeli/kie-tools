@@ -21,7 +21,6 @@ import * as path from "path";
 import { merge } from "webpack-merge";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-// import MonacoWebpackPlugin from "monaco-editor-webpack-plugin";
 import CopyPlugin from "copy-webpack-plugin";
 import FileManagerPlugin from "filemanager-webpack-plugin";
 import { ConsoleRemotePlugin } from "@openshift-console/dynamic-plugin-sdk-webpack";
@@ -49,61 +48,34 @@ export default async (webpackEnv: any, webpackArgv: any) => {
           chunkFilename: "[name].bundle.js",
         },
         resolve: {
-          fallback: {
-            https: require.resolve("https-browserify"),
-            http: require.resolve("stream-http"),
-            os: require.resolve("os-browserify/browser"),
-          },
           alias: {
-            // "@patternfly/react-core/dist": "@patternfly/react-core",
-            prettier$: path.resolve(__dirname, "node_modules/prettier"),
-            "prettier/parser-yaml": path.resolve(__dirname, "node_modules/prettier/plugins/yaml"),
-            // "jsonc-parser": require.resolve("jsonc-parser"),
-            // // "./impl/*": path.resolve(__dirname, "node_modules/jsonc-parser/lib/esm/impl/*"),
-            // "jsonc-parser": require.resolve("jsonc-parser/lib/esm/main.js"),
-            // "./impl/*": path.resolve(__dirname, "node_modules/jsonc-parser/lib/esm/impl/*"),
-            // "vscode-json-languageservice/*": path.resolve(
-            //   __dirname,
-            //   "node_modules/vscode-json-languageservice/lib/esm/*"
-            // ),
-            //
-            //
-            "@kie-tools/runtime-tools-components/dist": "@kie-tools/runtime-tools-components/src/common",
+            prettier$: path.resolve(__dirname, "./node_modules/prettier"),
+
+            // force the use of esm format instead of umd
+            "vscode-json-languageservice/lib/umd/services": path.resolve(
+              __dirname,
+              "./node_modules/vscode-json-languageservice/lib/esm/services"
+            ),
+
             "@kie-tools-core/editor/dist": "@kie-tools-core/editor/src",
             "@kie-tools-core/envelope-bus/dist": "@kie-tools-core/envelope-bus/src",
             "@kie-tools-core/workspace/dist": "@kie-tools-core/workspace/src",
+            "@kie-tools/json-yaml-language-service/dist": "@kie-tools/json-yaml-language-service/src",
+            "@kie-tools/runtime-tools-components/dist": "@kie-tools/runtime-tools-components/src/common",
             "@kie-tools/serverless-workflow-combined-editor/dist": "@kie-tools/serverless-workflow-combined-editor/src",
-            "@kie-tools/serverless-workflow-standalone-editor/dist":
-              "@kie-tools/serverless-workflow-standalone-editor/src",
+            "@kie-tools/serverless-workflow-jq-expressions/dist": "@kie-tools/serverless-workflow-jq-expressions/src",
             "@kie-tools/serverless-workflow-language-service/dist":
               "@kie-tools/serverless-workflow-language-service/src",
-            "@kie-tools/json-yaml-language-service/dist": "@kie-tools/json-yaml-language-service/src",
-            "@kie-tools/serverless-workflow-jq-expressions/dist": "@kie-tools/serverless-workflow-jq-expressions/src",
             "@kie-tools/serverless-workflow-service-catalog/dist": "@kie-tools/serverless-workflow-service-catalog/src",
+            "@kie-tools/serverless-workflow-standalone-editor/dist":
+              "@kie-tools/serverless-workflow-standalone-editor/src",
             "@kie-tools/yaml-language-server": "@kie-tools/yaml-language-server/src",
-
-            // "!!raw-loader!../../dist/resources/swf/swfCombinedEditorEnvelopeIndex.html":
-            //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfCombinedEditorEnvelopeIndex.html",
-            //
-            // "!!raw-loader!../../dist/resources/swf/swfDiagramEditorEnvelopeIndex.html":
-            //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfDiagramEditorEnvelopeIndex.html",
-            //
-            // "!!raw-loader!../../dist/resources/swf/swfTextEditorEnvelopeIndex.html":
-            //   "!!raw-loader!../serverless-workflow-standalone-editor/dist/resources/swf/swfTextEditorEnvelopeIndex.html",
           },
           extensions: [".tsx", ".ts", ".js", ".jsx"],
           modules: ["node_modules"],
         },
         plugins: [
-          // new webpack.IgnorePlugin({
-          //   resourceRegExp: /^jsonc-parser$/,
-          // }),
           new ConsoleRemotePlugin(),
-          // new HtmlWebpackPlugin({
-          //   template: "./src/index.html",
-          //   inject: false,
-          //   minify: false,
-          // }),
           new CopyPlugin({
             patterns: [
               { from: "../resources", to: "./resources" },
@@ -148,14 +120,16 @@ export default async (webpackEnv: any, webpackArgv: any) => {
               },
             },
           }),
-          // new MonacoWebpackPlugin({
-          //   languages: ["json"],
-          // }),
           new NodePolyfillPlugin(),
         ],
       }),
       module: {
         rules: [
+          {
+            test: /\.sw\.(yaml|yml|json)$/i,
+            type: "javascript/auto",
+            use: "raw-loader",
+          },
           {
             test: /\.(jsx?|tsx?)$/,
             exclude: /\/node_modules\//,

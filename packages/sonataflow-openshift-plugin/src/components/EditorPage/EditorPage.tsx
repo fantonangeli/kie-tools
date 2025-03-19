@@ -34,7 +34,9 @@ import { Page, PageSection } from "@patternfly/react-core/dist/js/components/Pag
 import { basename, extname } from "path";
 import * as React from "react";
 import { useCallback, useMemo, useState, useEffect, useRef } from "react";
-const greetingWF: any = require("./jsongreet.sw.json");
+
+import greetingWF from "!!raw-loader!./jsongreet.sw.json";
+import yamlgreetWF from "!!raw-loader!./yamlgreet.sw.yml";
 
 export default function EditorPage() {
   const swfEditorContainer = useRef<HTMLDivElement>(null);
@@ -60,7 +62,8 @@ export default function EditorPage() {
   }, []);
 
   useEffect(() => {
-    setContent("jsongreet.sw.json", JSON.stringify(greetingWF));
+    setContent("jsongreet.sw.json", greetingWF);
+    // setContent("yamlgreet.sw.yml", yamlgreetWF);
   }, [setContent]);
 
   useEffect(() => {
@@ -91,7 +94,7 @@ export default function EditorPage() {
         unsavedChanges.current!.style.display = "none";
       }
     });
-  }, [editor]);
+  }, [editor, workflowType]);
 
   return (
     <Page>

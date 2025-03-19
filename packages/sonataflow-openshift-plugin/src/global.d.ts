@@ -18,3 +18,11 @@
  */
 
 declare module "*.html";
+declare module "*.sw.json" {
+  const content: any;
+  export default content;
+}
+declare module "*.sw.yml" {
+  const content: any;
+  export default content;
+}

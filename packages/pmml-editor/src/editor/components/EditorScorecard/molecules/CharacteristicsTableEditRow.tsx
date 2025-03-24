@@ -210,9 +210,6 @@ export const CharacteristicsTableEditRow = (props: CharacteristicsTableEditRowPr
                 label="Name"
                 isRequired={true}
                 fieldId="characteristic-form-name-helper"
-                // helperTextInvalid="Name is mandatory and must be unique"
-                // helperTextInvalidIcon={<ExclamationCircleIcon />}
-                // validated={name.valid ? "default" : "error"}
                 style={{ width: "18em" }}
               >
                 <TextInput
@@ -284,8 +281,6 @@ export const CharacteristicsTableEditRow = (props: CharacteristicsTableEditRowPr
                     </button>
                   </Tooltip>
                 }
-                // validated={reasonCodeValidation.length > 0 ? "warning" : "default"}
-                // helperText={reasonCodeValidation.length > 0 ? reasonCodeValidation[0].message : undefined}
               >
                 <TextInput
                   type="text"
@@ -342,8 +337,6 @@ export const CharacteristicsTableEditRow = (props: CharacteristicsTableEditRowPr
                     </button>
                   </Tooltip>
                 }
-                // helperText={baselineScoreValidation.length > 0 ? baselineScoreValidation[0].message : undefined}
-                // validated={baselineScoreValidation.length > 0 ? "warning" : "default"}
                 style={{ width: "16em" }}
               >
                 <TextInput

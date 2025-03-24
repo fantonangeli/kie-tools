@@ -27,7 +27,7 @@ import { Radio } from "@patternfly/react-core/dist/js/components/Radio";
 
 import { UsersIcon } from "@patternfly/react-icons/dist/js/icons/users-icon";
 import { LockIcon } from "@patternfly/react-icons/dist/js/icons/lock-icon";
-import { ExclamationCircleIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-circle-icon";
+
 import { Button } from "@patternfly/react-core/dist/js/components/Button";
 import { GIST_ORIGIN_REMOTE_NAME } from "@kie-tools-core/workspaces-git-fs/dist/constants/GitConstants";
 import { Alert } from "@patternfly/react-core/dist/js/components/Alert";
@@ -76,7 +76,7 @@ export const CreateGistOrSnippetModal = (props: {
   const [isGistOrSnippetLoading, setGistOrSnippetLoading] = useState(false);
 
   const {
-    alerts: { successfullyUpdatedGistOrSnippetAlert, errorAlert },
+    alerts: { successfullyCreatedGistOrSnippetAlert, errorAlert },
   } = useGitIntegration();
 
   const createGitHubGist: () => Promise<CreateGistOrSnippetResponse> = useCallback(async () => {
@@ -133,7 +133,7 @@ If you are, it means that creating this Snippet failed and it can safely be dele
       return (e.name = "https" && e.href.startsWith("https"));
     })[0].href;
 
-    return { cloneUrl, htmlUrl: json.links.html };
+    return { cloneUrl, htmlUrl: json.links.html.href };
   }, [bitbucketClient, env.KIE_SANDBOX_APP_NAME, isPrivate, props.workspace.name, selectedOrganization]);
 
   const createGistOrSnippet = useCallback(async () => {
@@ -215,8 +215,8 @@ If you are, it means that creating this Snippet failed and it can safely be dele
       });
 
       props.onClose();
-      successfullyUpdatedGistOrSnippetAlert.show({ url: gistOrSnippet.cloneUrl });
-      props.onSuccess?.({ url: gistOrSnippet.cloneUrl });
+      props.onSuccess?.({ url: gistOrSnippet.htmlUrl });
+      successfullyCreatedGistOrSnippetAlert.show({ url: gistOrSnippet.htmlUrl });
       return;
     } catch (err) {
       setError(err);
@@ -234,7 +234,7 @@ If you are, it means that creating this Snippet failed and it can safely be dele
     workspaces,
     props,
     gitConfig,
-    successfullyUpdatedGistOrSnippetAlert,
+    successfullyCreatedGistOrSnippetAlert,
     errorAlert,
   ]);
 
@@ -288,11 +288,7 @@ If you are, it means that creating this Snippet failed and it can safely be dele
             <br />
           </FormAlert>
         )}
-        <FormGroup
-          label={i18n.createGistOrSnippetModal[authProvider.type].form.select.label}
-          // helperText={i18n.createGistOrSnippetModal[authProvider.type].form.select.description}
-          fieldId="organization"
-        >
+        <FormGroup label={i18n.createGistOrSnippetModal[authProvider.type].form.select.label} fieldId="organization">
           <LoadOrganizationsSelect
             workspace={props.workspace}
             onSelect={setSelectedOrganization}
@@ -306,11 +302,7 @@ If you are, it means that creating this Snippet failed and it can safely be dele
             </HelperText>
           </FormHelperText>
         </FormGroup>
-        <FormGroup
-          // helperText={<FormHelperText style={{ visibility: "hidden" }} />}
-          // helperTextInvalidIcon={<ExclamationCircleIcon />}
-          fieldId="gist-or-snippet-visibility"
-        >
+        <FormGroup fieldId="gist-or-snippet-visibility">
           <Radio
             isChecked={!isPrivate}
             id={"gist-or-snippet-public"}

@@ -28,7 +28,7 @@ import { TextInput } from "@patternfly/react-core/dist/js/components/TextInput";
 
 import { UsersIcon } from "@patternfly/react-icons/dist/js/icons/users-icon";
 import { LockIcon } from "@patternfly/react-icons/dist/js/icons/lock-icon";
-import { ExclamationCircleIcon } from "@patternfly/react-icons/dist/js/icons/exclamation-circle-icon";
+
 import { Button } from "@patternfly/react-core/dist/js/components/Button";
 import { ValidatedOptions } from "@patternfly/react-core/dist/js/helpers/constants";
 import { Divider } from "@patternfly/react-core/dist/js/components/Divider";
@@ -301,11 +301,7 @@ export function CreateGitRepositoryModal(props: {
             <br />
           </FormAlert>
         )}
-        <FormGroup
-          label={i18n.createGitRepositoryModal[authProvider.type].form.select.label}
-          // helperText={i18n.createGitRepositoryModal[authProvider.type].form.select.description}
-          fieldId="organization"
-        >
+        <FormGroup label={i18n.createGitRepositoryModal[authProvider.type].form.select.label} fieldId="organization">
           <LoadOrganizationsSelect workspace={props.workspace} onSelect={setSelectedOrganization} />
           <FormHelperText>
             <HelperText>
@@ -318,11 +314,7 @@ export function CreateGitRepositoryModal(props: {
         <FormGroup
           label={i18n.createGitRepositoryModal.form.nameField.label}
           isRequired={true}
-          // helperTextInvalid={i18n.createGitRepositoryModal.form.nameField.hint}
-          // helperText={<FormHelperText style={{ visibility: "hidden" }} />}
-          // helperTextInvalidIcon={<ExclamationCircleIcon />}
           fieldId="repository-name"
-          // validated={validated}
         >
           <TextInput
             id={"repo-name"}
@@ -347,11 +339,7 @@ export function CreateGitRepositoryModal(props: {
           )}
         </FormGroup>
         <Divider inset={{ default: "inset3xl" }} />
-        <FormGroup
-          // helperText={<FormHelperText style={{ visibility: "hidden" }} />}
-          // helperTextInvalidIcon={<ExclamationCircleIcon />}
-          fieldId="repo-visibility"
-        >
+        <FormGroup fieldId="repo-visibility">
           <Radio
             isChecked={!isPrivate}
             id={"repository-public"}
@@ -379,13 +367,6 @@ export function CreateGitRepositoryModal(props: {
             description={i18n.createGitRepositoryModal.form.visibility.private.description}
             onChange={() => setPrivate(true)}
           />
-          {/* <FormHelperText>
-            <HelperText>
-              <HelperTextItem variant="error">
-                <ExclamationCircleIcon />{" "}
-              </HelperTextItem>
-            </HelperText>
-          </FormHelperText> */}
         </FormGroup>
       </Form>
     </Modal>

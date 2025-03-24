@@ -27,14 +27,6 @@ import {
 import { generateUuid } from "@kie-tools/boxed-expression-component/dist/api";
 import { ResourceContent, SearchType, WorkspaceChannelApi, WorkspaceEdit } from "@kie-tools-core/workspace/dist/api";
 import { KeyboardShortcutsService } from "@kie-tools-core/keyboard-shortcuts/dist/envelope/KeyboardShortcutsService";
-import { Flex } from "@patternfly/react-core/dist/js/layouts/Flex";
-import {
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateHeader,
-} from "@patternfly/react-core/dist/js/components/EmptyState";
-
 import { domParser } from "@kie-tools/xml-parser-ts";
 import { normalize } from "@kie-tools/dmn-marshaller/dist/normalization/normalize";
 import { getMarshaller as getDmnMarshaller } from "@kie-tools/dmn-marshaller";
@@ -42,7 +34,8 @@ import * as TestScenarioEditor from "@kie-tools/scesim-editor/dist/TestScenarioE
 import { getMarshaller, SceSimMarshaller, SceSimModel } from "@kie-tools/scesim-marshaller";
 import { EMPTY_ONE_EIGHT } from "@kie-tools/scesim-editor/dist/resources/EmptyScesimFile";
 
-export const DMN_MODELS_SEARCH_GLOB_PATTERN = "**/*.{dmn}";
+export const DMN_MODELS_SEARCH_GLOB_PATTERN = "**/*.dmn";
+export const TARGET_DIRECTORY = "target/classes/";
 
 export type TestScenarioEditorRootProps = {
   exposing: (s: TestScenarioEditorRoot) => void;
@@ -56,14 +49,13 @@ export type TestScenarioEditorRootProps = {
 };
 
 export type TestScenarioEditorRootState = {
-  error: Error | undefined;
   externalModelsByNamespace: TestScenarioEditor.ExternalDmnsIndex;
   externalModelsManagerDoneBootstraping: boolean;
   isReadOnly: boolean;
   keyboardShortcutsRegistred: boolean;
   keyboardShortcutsRegisterIds: number[];
   marshaller: SceSimMarshaller | undefined;
-  openFilenormalizedPosixPathRelativeToTheWorkspaceRoot: string | undefined;
+  openFileNormalizedPosixPathRelativeToTheWorkspaceRoot: string | undefined;
   pointer: number;
   stack: SceSimModel[];
 };
@@ -78,14 +70,13 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
     props.exposing(this);
     this.testScenarioEditorRef = React.createRef();
     this.state = {
-      error: undefined,
-      externalModelsByNamespace: {},
+      externalModelsByNamespace: new Map(),
       externalModelsManagerDoneBootstraping: false,
       isReadOnly: props.isReadOnly,
       keyboardShortcutsRegisterIds: [],
       keyboardShortcutsRegistred: false,
       marshaller: undefined,
-      openFilenormalizedPosixPathRelativeToTheWorkspaceRoot: undefined,
+      openFileNormalizedPosixPathRelativeToTheWorkspaceRoot: undefined,
       pointer: -1,
       stack: [],
     };
@@ -116,10 +107,11 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
   }
 
   public async setContent(
-    openFilenormalizedPosixPathRelativeToTheWorkspaceRoot: string,
+    openFileNormalizedPosixPathRelativeToTheWorkspaceRoot: string,
     content: string
   ): Promise<void> {
-    const marshaller = this.getMarshaller(content || EMPTY_ONE_EIGHT);
+    const marshaller = getMarshaller(content || EMPTY_ONE_EIGHT);
+    const scesimModel = marshaller.parser.parse();
 
     // Save stack
     let savedStackPointer: SceSimModel[] = [];
@@ -128,11 +120,21 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
     this.setState((prev) => {
       savedStackPointer = [...prev.stack];
       return {
-        stack: [marshaller.parser.parse()],
-        openFilenormalizedPosixPathRelativeToTheWorkspaceRoot,
+        stack: [scesimModel],
+        openFileNormalizedPosixPathRelativeToTheWorkspaceRoot,
         pointer: 0,
       };
     });
+
+    if (
+      !scesimModel ||
+      !scesimModel.ScenarioSimulationModel ||
+      scesimModel.ScenarioSimulationModel["parsererror" as keyof typeof scesimModel.ScenarioSimulationModel]
+    ) {
+      throw new Error(
+        "Impossibile to correctly parse the provided scesim file. Most likely, the XML structure of the file is invalid."
+      );
+    }
 
     // Wait the external manager models to load.
     await this.externalModelsManagerDoneBootstraping.promise;
@@ -141,14 +143,14 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
     this.setState((prev) => {
       // External change to the same file.
       if (
-        prev.openFilenormalizedPosixPathRelativeToTheWorkspaceRoot ===
-        openFilenormalizedPosixPathRelativeToTheWorkspaceRoot
+        prev.openFileNormalizedPosixPathRelativeToTheWorkspaceRoot ===
+        openFileNormalizedPosixPathRelativeToTheWorkspaceRoot
       ) {
         const newStack = savedStackPointer.slice(0, prev.pointer + 1);
         return {
           externalModelsManagerDoneBootstraping: true,
           isReadOnly: prev.isReadOnly,
-          openFilenormalizedPosixPathRelativeToTheWorkspaceRoot,
+          openFileNormalizedPosixPathRelativeToTheWorkspaceRoot,
           marshaller,
           pointer: newStack.length,
           stack: [...newStack, marshaller.parser.parse()],
@@ -161,7 +163,7 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
           externalModelsManagerDoneBootstraping: true,
           isReadOnly: prev.isReadOnly,
           marshaller,
-          openFilenormalizedPosixPathRelativeToTheWorkspaceRoot,
+          openFileNormalizedPosixPathRelativeToTheWorkspaceRoot,
           pointer: 0,
           stack: [marshaller.parser.parse()],
         };
@@ -171,20 +173,6 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
 
   public get model(): SceSimModel | undefined {
     return this.state.stack[this.state.pointer];
-  }
-
-  // Internal methods
-
-  private getMarshaller(content: string) {
-    try {
-      return getMarshaller(content || EMPTY_ONE_EIGHT);
-    } catch (e) {
-      this.setState((s) => ({
-        ...s,
-        error: e,
-      }));
-      throw e;
-    }
   }
 
   private setExternalModelsByNamespace = (externalModelsByNamespace: TestScenarioEditor.ExternalDmnsIndex) => {
@@ -203,14 +191,14 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
       },
       () =>
         this.props.onNewEdit({
-          id: `${this.state.openFilenormalizedPosixPathRelativeToTheWorkspaceRoot}__${generateUuid()}`,
+          id: `${this.state.openFileNormalizedPosixPathRelativeToTheWorkspaceRoot}__${generateUuid()}`,
         })
     );
   };
 
   private onRequestExternalModelsAvailableToInclude: TestScenarioEditor.OnRequestExternalModelsAvailableToInclude =
     async () => {
-      if (!this.state.openFilenormalizedPosixPathRelativeToTheWorkspaceRoot) {
+      if (!this.state.openFileNormalizedPosixPathRelativeToTheWorkspaceRoot) {
         return [];
       }
 
@@ -220,7 +208,10 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
       });
 
       return list.normalizedPosixPathsRelativeToTheWorkspaceRoot.flatMap((p) =>
-        __path.relative(__path.dirname(this.state.openFilenormalizedPosixPathRelativeToTheWorkspaceRoot!), p)
+        // Filter out assets into target/classes directory
+        p.includes(TARGET_DIRECTORY)
+          ? []
+          : __path.relative(__path.dirname(this.state.openFileNormalizedPosixPathRelativeToTheWorkspaceRoot!), p)
       );
     };
 
@@ -229,19 +220,12 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
   ) => {
     const normalizedPosixPathRelativeToTheWorkspaceRoot = __path
       .resolve(
-        __path.dirname(this.state.openFilenormalizedPosixPathRelativeToTheWorkspaceRoot!),
+        __path.dirname(this.state.openFileNormalizedPosixPathRelativeToTheWorkspaceRoot!),
         normalizedPosixPathRelativeToTheOpenFile
       )
       .substring(1); // Remove leading slash.
 
     return normalizedPosixPathRelativeToTheWorkspaceRoot;
-
-    // Example:
-    // this.state.openFileAbsolutePath = /Users/ljmotta/packages/dmns/Dmn.dmn
-    // normalizedPosixPathRelativeToTheOpenFile = ../../tmp/Tmp.dmn
-    // workspaceRootAbsolutePosixPath = /Users/ljmotta
-    // resolvedAbsolutePath = /Users/ljmotta/tmp/Tmp.dmn
-    // return (which is the normalizedPosixPathRelativeToTheWorkspaceRoot) = tmp/Tmp.dmn
   };
 
   private onRequestExternalModelByPathsRelativeToTheOpenFile: TestScenarioEditor.OnRequestExternalModelByPath = async (
@@ -269,7 +253,7 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
   };
 
   private onOpenFileFromPathRelativeToTheOpenFile = (normalizedPosixPathRelativeToTheOpenFile: string) => {
-    if (!this.state.openFilenormalizedPosixPathRelativeToTheWorkspaceRoot) {
+    if (!this.state.openFileNormalizedPosixPathRelativeToTheWorkspaceRoot) {
       return;
     }
 
@@ -318,11 +302,11 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
   public render() {
     return (
       <>
-        {this.state.error && <TestScenarioMarshallerFallbackError error={this.state.error} />}
         {this.model && (
           <>
             <TestScenarioEditor.TestScenarioEditor
               ref={this.testScenarioEditorRef}
+              externalModelsByNamespace={this.state.externalModelsByNamespace}
               issueTrackerHref={""}
               model={this.model}
               onModelChange={this.onModelChange}
@@ -331,14 +315,14 @@ export class TestScenarioEditorRoot extends React.Component<TestScenarioEditorRo
               onRequestToJumpToPath={this.onOpenFileFromPathRelativeToTheOpenFile}
               onRequestToResolvePath={this.onRequestToResolvePathRelativeToTheOpenFile}
               openFileNormalizedPosixPathRelativeToTheWorkspaceRoot={
-                this.state.openFilenormalizedPosixPathRelativeToTheWorkspaceRoot
+                this.state.openFileNormalizedPosixPathRelativeToTheWorkspaceRoot
               }
             />
             {
               <ExternalModelsManager
                 workspaceRootAbsolutePosixPath={this.props.workspaceRootAbsolutePosixPath}
                 thisScesimNormalizedPosixPathRelativeToTheWorkspaceRoot={
-                  this.state.openFilenormalizedPosixPathRelativeToTheWorkspaceRoot
+                  this.state.openFileNormalizedPosixPathRelativeToTheWorkspaceRoot
                 }
                 model={this.model}
                 onChange={this.setExternalModelsByNamespace}
@@ -372,14 +356,11 @@ function ExternalModelsManager({
   externalModelsManagerDoneBootstraping: PromiseImperativeHandle<void>;
 }) {
   const targetNamespace = useMemo(() => {
-    if (model.ScenarioSimulationModel.settings.type?.__$$text !== "DMN") {
-      return null;
-    }
-    if (model.ScenarioSimulationModel.settings.dmnNamespace?.__$$text) {
-      return model.ScenarioSimulationModel.settings.dmnNamespace?.__$$text.toUpperCase();
+    if (model.ScenarioSimulationModel?.settings?.dmnNamespace?.__$$text) {
+      return model.ScenarioSimulationModel.settings.dmnNamespace.__$$text;
     }
     return null;
-  }, [model.ScenarioSimulationModel.settings]);
+  }, [model.ScenarioSimulationModel?.settings?.dmnNamespace]);
 
   const [externalUpdatesCount, setExternalUpdatesCount] = useState(0);
 
@@ -416,7 +397,7 @@ function ExternalModelsManager({
   useEffect(() => {
     let canceled = false;
 
-    if (!thisScesimNormalizedPosixPathRelativeToTheWorkspaceRoot || !targetNamespace) {
+    if (!thisScesimNormalizedPosixPathRelativeToTheWorkspaceRoot) {
       return;
     }
 
@@ -426,9 +407,8 @@ function ExternalModelsManager({
         for (let i = 0; i < list.normalizedPosixPathsRelativeToTheWorkspaceRoot.length; i++) {
           const normalizedPosixPathRelativeToTheWorkspaceRoot = list.normalizedPosixPathsRelativeToTheWorkspaceRoot[i];
 
-          if (
-            normalizedPosixPathRelativeToTheWorkspaceRoot === thisScesimNormalizedPosixPathRelativeToTheWorkspaceRoot
-          ) {
+          // Filter out assets into target/classes directory
+          if (normalizedPosixPathRelativeToTheWorkspaceRoot.includes(TARGET_DIRECTORY)) {
             continue;
           }
 
@@ -442,7 +422,7 @@ function ExternalModelsManager({
         return Promise.all(resources);
       })
       .then((resources) => {
-        const externalModelsIndex: TestScenarioEditor.ExternalDmnsIndex = {};
+        const externalModelsByNamespace: TestScenarioEditor.ExternalDmnsIndex = new Map();
 
         for (let i = 0; i < resources.length; i++) {
           const resource = resources[i];
@@ -460,31 +440,37 @@ function ExternalModelsManager({
           const ext = __path.extname(resource.normalizedPosixPathRelativeToTheWorkspaceRoot);
           if (ext === ".dmn") {
             const namespace = domParser.getDomDocument(content).documentElement.getAttribute("namespace");
-            if (namespace === targetNamespace) {
+            if (targetNamespace && namespace === targetNamespace) {
               // Check for multiplicity of namespaces on DMN models
-              if (externalModelsIndex[namespace]) {
+              if (externalModelsByNamespace.has(namespace)) {
                 console.warn(
                   `TEST SCENARIO EDITOR ROOT: Multiple DMN models encountered with the same namespace '${namespace}': '${
                     resource.normalizedPosixPathRelativeToTheWorkspaceRoot
                   }' and '${
-                    externalModelsIndex[namespace]!.normalizedPosixPathRelativeToTheOpenFile
+                    externalModelsByNamespace.get(namespace)!.normalizedPosixPathRelativeToTheOpenFile
                   }'. The latter will be considered.`
                 );
               }
 
-              externalModelsIndex[namespace] = {
+              externalModelsByNamespace.set(namespace, {
                 normalizedPosixPathRelativeToTheOpenFile,
                 model: normalize(getDmnMarshaller(content, { upgradeTo: "latest" }).parser.parse()),
                 svg: "",
-              };
+              });
             }
           } else {
             throw new Error(`Unknown extension '${ext}'.`);
           }
         }
 
+        /* If the DMN file with the targetNamespace is not found, it populates the returning externalModelsByNamespace Map
+        /* adding the targetNamespace key with an undefined model, to be propagated to the internal Test Scenario component */
+        if (targetNamespace && !externalModelsByNamespace.has(targetNamespace)) {
+          externalModelsByNamespace.set(targetNamespace, undefined);
+        }
+
         if (!canceled) {
-          onChange(externalModelsIndex);
+          onChange(externalModelsByNamespace);
         }
         externalModelsManagerDoneBootstraping.resolve();
       });
@@ -504,20 +490,4 @@ function ExternalModelsManager({
   ]);
 
   return <></>;
-}
-
-function TestScenarioMarshallerFallbackError({ error }: { error: Error }) {
-  return (
-    <Flex justifyContent={{ default: "justifyContentCenter" }} style={{ marginTop: "100px" }}>
-      <EmptyState style={{ maxWidth: "1280px" }}>
-        <EmptyStateHeader
-          titleText="Unable to open file."
-          icon={<EmptyStateIcon icon={() => <div style={{ fontSize: "3em" }}>😕</div>} />}
-          headingLevel={"h4"}
-        />
-        <br />
-        <EmptyStateBody>Error details: {error.message}</EmptyStateBody>
-      </EmptyState>
-    </Flex>
-  );
 }

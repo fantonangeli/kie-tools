@@ -17,7 +17,7 @@
  * under the License.
  */
 import React, { useEffect } from "react";
-import { Grid, GridItem } from "@patternfly/react-core/dist/js/layouts/Grid";
+
 import { Card } from "@patternfly/react-core/dist/js/components/Card";
 import { PageSection } from "@patternfly/react-core/dist/js/components/Page";
 import TaskInboxContainer from "../../containers/TaskInboxContainer/TaskInboxContainer";
@@ -30,6 +30,7 @@ import {
   ouiaPageTypeAndObjectId,
 } from "@kie-tools/runtime-tools-components/dist/ouiaTools";
 import { PageTitle } from "@kie-tools/runtime-tools-components/dist/components/PageTitle";
+import { Flex } from "@patternfly/react-core/dist/js/layouts/Flex";
 
 const TaskInboxPage: React.FC<OUIAProps> = (ouiaId, ouiaSafe) => {
   const appContext = useDevUIAppContext();
@@ -48,12 +49,10 @@ const TaskInboxPage: React.FC<OUIAProps> = (ouiaId, ouiaSafe) => {
         variant="light"
         {...componentOuiaProps("header" + (ouiaId ? "-" + ouiaId : ""), "tasks-page", ouiaSafe)}
       >
-        <Grid>
-          <GridItem span={10}>
-            <PageTitle title="Tasks" />
-          </GridItem>
-          <GridItem span={2}>{user.length > 0 && <TaskInboxSwitchUser user={user} />}</GridItem>
-        </Grid>
+        <Flex alignItems={{ default: "alignItemsCenter" }}>
+          <PageTitle title="Tasks" />
+          {user.length > 0 && <TaskInboxSwitchUser user={user} />}
+        </Flex>
       </PageSection>
       <PageSection {...componentOuiaProps("content" + (ouiaId ? "-" + ouiaId : ""), "tasks-page-section", ouiaSafe)}>
         <Card className="Dev-ui__card-size">{renderTaskInbox()}</Card>

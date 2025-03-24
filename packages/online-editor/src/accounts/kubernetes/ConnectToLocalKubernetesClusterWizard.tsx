@@ -85,7 +85,7 @@ const COMMANDS = {
   kindCreateClusterWindows: (configUrl: string) =>
     `curl -k ${configUrl} -o kind-cluster-config.yaml; kind create cluster --config=kind-cluster-config.yaml; rm kind-cluster-config.yaml`,
   minikubeCreateCluster: () =>
-    `minikube start --extra-config "apiserver.cors-allowed-origins=[https://*]"  --ports 80:80,443:443,8443:8443 --listen-address 0.0.0.0`,
+    `minikube start --extra-config "apiserver.cors-allowed-origins=[https://*]"  --ports 80:80,443:443,8443:8443 --listen-address 0.0.0.0 --memory 8192`,
   kindApplyIngress: () =>
     `kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml`,
   minikubeApllyIngress: () => `minikube addons enable ingress`,
@@ -502,13 +502,7 @@ export function ConnectToLocalKubernetesClusterWizard(props: {
             <br />
             <br />
             <Form className="pf-v5-u-mt-md">
-              <FormGroup
-                fieldId={"dev-deployments-config-token"}
-                label={i18n.terms.token}
-                // validated={isTokenValidated ? "success" : "error"}
-                // helperTextInvalid={i18n.devDeployments.common.requiredField}
-                isRequired={true}
-              >
+              <FormGroup fieldId={"dev-deployments-config-token"} label={i18n.terms.token} isRequired={true}>
                 <InputGroup>
                   <InputGroupItem isFill>
                     <TextInput

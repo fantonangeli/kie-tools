@@ -42,11 +42,7 @@ export default async (webpackEnv: any, webpackArgv: any) => {
       ...merge(common(webpackEnv), {
         entry: {},
         context: path.resolve(__dirname, "src"),
-        output: {
-          path: path.resolve("./dist"),
-          filename: "[name].js",
-          chunkFilename: "[name].bundle.js",
-        },
+        output: {},
         resolve: {
           alias: {
             prettier$: path.resolve(__dirname, "./node_modules/prettier"),
@@ -78,28 +74,6 @@ export default async (webpackEnv: any, webpackArgv: any) => {
           new ConsoleRemotePlugin(),
           new CopyPlugin({
             patterns: [
-              { from: "../resources", to: "./resources" },
-              {
-                from: "../node_modules/@kie-tools/serverless-workflow-standalone-editor/dist/resources",
-                to: "./resources",
-              },
-              {
-                from: "../resources/serverless-workflow-combined-editor-envelope.html",
-                to: "./serverless-workflow-combined-editor-envelope.html",
-              },
-              {
-                from: "../resources/serverless-workflow-diagram-editor-envelope.html",
-                to: "./serverless-workflow-diagram-editor-envelope.html",
-              },
-              {
-                from: "../resources/serverless-workflow-text-editor-envelope.html",
-                to: "./serverless-workflow-text-editor-envelope.html",
-              },
-              {
-                from: swEditorAssets.swEditorPath(),
-                to: "./diagram",
-                globOptions: { ignore: ["**/WEB-INF/**/*", "**/*.html"] },
-              },
               {
                 context: swEditorAssets.swEditorFontsPath(),
                 from: "fontawesome-webfont.*",
@@ -108,19 +82,6 @@ export default async (webpackEnv: any, webpackArgv: any) => {
               },
             ],
           }),
-          new FileManagerPlugin({
-            events: {
-              onEnd: {
-                mkdir: ["./dist/resources/webapp/"],
-                copy: [
-                  { source: "./dist/*.js", destination: "./dist/resources/webapp/" },
-                  { source: "./dist/*.map", destination: "./dist/resources/webapp/" },
-                  // { source: "./dist/fonts", destination: "./dist/resources/webapp/fonts" },
-                ],
-              },
-            },
-          }),
-          new NodePolyfillPlugin(),
         ],
       }),
       module: {

@@ -2666,11 +2666,6 @@
       },
       {
         "source": "@kie-tools/sonataflow-openshift-plugin",
-        "target": "@kie-tools-core/react-hooks",
-        "weight": 1
-      },
-      {
-        "source": "@kie-tools/sonataflow-openshift-plugin",
         "target": "@kie-tools/runtime-tools-process-webapp-components",
         "weight": 1
       },

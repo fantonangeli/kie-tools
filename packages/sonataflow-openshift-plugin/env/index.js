@@ -25,7 +25,7 @@ module.exports = composeEnv([require("@kie-tools/root-env/env")], {
     return {
       sonataflowOpenshiftPlugin: {
         console: {
-          port: 9030,
+          port: 9000,
         },
         plugin: {
           port: 9031,

@@ -11,7 +11,7 @@
     "type": "console.navigation/href",
     "properties": {
       "id": "example",
-      "name": "%plugin__console-plugin-template~Plugin Example%",
+      "name": "%plugin__sonataflow-openshift-plugin~Plugin Example%",
       "href": "/example",
       "perspective": "admin",
       "section": "home"
@@ -29,7 +29,7 @@
     "type": "console.navigation/href",
     "properties": {
       "id": "editorPage",
-      "name": "%plugin__console-plugin-template~Editor Page%",
+      "name": "%plugin__sonataflow-openshift-plugin~Editor Page%",
       "href": "/editor_page",
       "perspective": "admin",
       "section": "home"

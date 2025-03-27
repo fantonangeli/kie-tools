@@ -65,7 +65,14 @@ module.exports = (webpackEnv) =>
     },
     plugins: [
       new CopyPlugin({
-        patterns: [{ from: "./dev-webapp/static", to: "." }],
+        patterns: [
+          {
+            context: swEditorAssets.swEditorFontsPath(),
+            from: "fontawesome-webfont.*",
+            to: "./fonts",
+            force: true,
+          },
+        ],
       }),
     ],
     module: {

@@ -16,7 +16,6 @@
     "build:dev": "rimraf dist && webpack --env dev",
     "build:prod": "pnpm lint && pnpm test && rimraf dist && webpack",
     "lint": "run-script-if --bool \"$(build-env linters.run)\" --then \"kie-tools--eslint ./src\"",
-    "none": "none",
     "start": "concurrently 'pnpm start:plugin' 'pnpm start:console'",
     "start:console": "run-script-os",
     "start:console:linux:darwin": "export CONSOLE_PORT=$(build-env sonataflowOpenshiftPlugin.console.port); export PLUGIN_PORT=$(build-env sonataflowOpenshiftPlugin.plugin.port); ./start-console.sh",

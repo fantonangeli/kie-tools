@@ -54,11 +54,11 @@ import { DmnEditorStoreApiContext, StoreApiType, useDmnEditorStore, useDmnEditor
 import { DmnDiagramSvg } from "./svg/DmnDiagramSvg";
 import { useEffectAfterFirstRender } from "./useEffectAfterFirstRender";
 import { INITIAL_COMPUTED_CACHE } from "./store/computed/initial";
-
-import "@kie-tools/dmn-marshaller/dist/kie-extensions"; // This is here because of the KIE Extension for DMN.
-import "./DmnEditor.css"; // Leave it for last, as this overrides some of the PF and RF styles.
 import { Commands, CommandsContextProvider, useCommands } from "./commands/CommandsContextProvider";
 import { DmnEditorSettingsContextProvider } from "./settings/DmnEditorSettingsContext";
+import { JavaCodeCompletionService } from "@kie-tools/import-java-classes-component/dist/components/ImportJavaClasses/services";
+import "@kie-tools/dmn-marshaller/dist/kie-extensions"; // This is here because of the KIE Extension for DMN.
+import "./DmnEditor.css"; // Leave it for last, as this overrides some of the PF and RF styles.
 
 const ON_MODEL_CHANGE_DEBOUNCE_TIME_IN_MS = 500;
 
@@ -167,11 +167,23 @@ export type DmnEditorProps = {
    */
   issueTrackerHref?: string;
   /**
+   * A flag to enable 'Evaluation Highlights' on supported channels (only ONLINE for now)
+   */
+  isEvaluationHighlightsSupported?: boolean;
+  /**
    * A flag to enable read-only mode on the DMN Editor.
    * When enabled navigation is still possible (e.g. entering the Boxed Expression Editor, Data Types and Included Models),
    * but no changes can be made and the model itself is unaltered.
    */
   isReadOnly?: boolean;
+  /**
+   * Boolean flag to check whether the "Import DataTypes From JavaClasses" feature is available.
+   */
+  isImportDataTypesFromJavaClassesSupported?: boolean;
+  /**
+   * This object defines all the API methods which ImportJavaClasses component can use to dialog with the Code Completion Extension
+   */
+  javaCodeCompletionService?: JavaCodeCompletionService;
   /**
    * When users want to jump to another file, this method is called, allowing the controller of this component decide what to do.
    * Links are only rendered if this is provided. Otherwise, paths will be rendered as text.
@@ -186,16 +198,20 @@ export type DmnEditorProps = {
    * Notifies the caller when the DMN Editor performs a new edit after the debounce time.
    */
   onModelDebounceStateChanged?: (changed: boolean) => void;
+
+  onOpenedBoxedExpressionEditorNodeChange?: (newOpenedNodeId: string | undefined) => void;
 };
 
 export const DmnEditorInternal = ({
   model,
   originalVersion,
   onModelChange,
+  onOpenedBoxedExpressionEditorNodeChange,
   onModelDebounceStateChanged,
   forwardRef,
 }: DmnEditorProps & { forwardRef?: React.Ref<DmnEditorRef> }) => {
   const boxedExpressionEditorActiveDrgElementId = useDmnEditorStore((s) => s.boxedExpressionEditor.activeDrgElementId);
+  const dmnEditorActiveTab = useDmnEditorStore((s) => s.navigation.tab);
   const isBeePropertiesPanelOpen = useDmnEditorStore((s) => s.boxedExpressionEditor.propertiesPanel.isOpen);
   const isDiagramPropertiesPanelOpen = useDmnEditorStore((s) => s.diagram.propertiesPanel.isOpen);
   const navigationTab = useDmnEditorStore((s) => s.navigation.tab);
@@ -207,10 +223,18 @@ export const DmnEditorInternal = ({
   const { dmnModelBeforeEditingRef, dmnEditorRootElementRef } = useDmnEditor();
   const { externalModelsByNamespace } = useExternalModels();
 
+  // Code to keep FormDmnOutputs.tsx selected card highlight in proper state
+  useEffect(() => {
+    onOpenedBoxedExpressionEditorNodeChange?.(
+      dmnEditorActiveTab === DmnEditorTab.EDITOR ? boxedExpressionEditorActiveDrgElementId : undefined
+    );
+  }, [boxedExpressionEditorActiveDrgElementId, dmnEditorActiveTab, onOpenedBoxedExpressionEditorNodeChange]);
+
   // Refs
   const diagramRef = useRef<DiagramRef>(null);
   const diagramContainerRef = useRef<HTMLDivElement>(null);
-  const beeContainerRef = useRef<HTMLDivElement>(null);
+  const beeContainerRef = useRef<HTMLDivElement | null>(null);
+  const drawerContentRef = useRef<HTMLDivElement | null>(null);
 
   // Allow imperativelly controlling the Editor.
   useImperativeHandle(
@@ -372,6 +396,12 @@ export const DmnEditorInternal = ({
   const diagramPropertiesPanel = useMemo(() => <DiagramPropertiesPanel />, []);
   const beePropertiesPanel = useMemo(() => <BoxedExpressionPropertiesPanel />, []);
 
+  useEffect(() => {
+    // This is the actual scrollableParentRef for BEE.
+    drawerContentRef.current =
+      (beeContainerRef?.current?.parentElement?.parentElement as HTMLDivElement | undefined) ?? null;
+  }, []);
+
   return (
     <div ref={dmnEditorRootElementRef} className={"kie-dmn-editor--root"}>
       <Tabs
@@ -405,7 +435,7 @@ export const DmnEditorInternal = ({
                   <DrawerContent panelContent={beePropertiesPanel}>
                     <DrawerContentBody>
                       <div className={"kie-dmn-editor--bee-container"} ref={beeContainerRef}>
-                        <BoxedExpressionScreen container={beeContainerRef} />
+                        <BoxedExpressionScreen container={drawerContentRef} />
                       </div>
                     </DrawerContentBody>
                   </DrawerContent>

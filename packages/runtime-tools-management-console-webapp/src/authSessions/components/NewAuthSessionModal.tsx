@@ -24,12 +24,12 @@ import { useAuthSessions, useAuthSessionsDispatch } from "../AuthSessionsContext
 import { AuthSessionsService } from "../AuthSessionsService";
 import { useEnv } from "../../env/hooks/EnvContext";
 import { useRoutes } from "../../navigation/Hooks";
-import { AUTH_SESSION_OIDC_DEFAULT_SCOPES, AuthSession } from "../AuthSessionApi";
+import { AuthSession } from "../AuthSessionApi";
 import { TextInput } from "@patternfly/react-core/dist/js/components/TextInput";
 import { Form, FormGroup, ActionGroup, FormHelperText } from "@patternfly/react-core/dist/js/components/Form";
 import { Checkbox } from "@patternfly/react-core/dist/js/components/Checkbox";
 import { ExpandableSection } from "@patternfly/react-core/dist/js/components/ExpandableSection";
-import { HelperText, HelperTextItem } from "@patternfly/react-core";
+import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/js/components/HelperText";
 
 type Props = {
   onAddAuthSession: (authSession: AuthSession) => void;
@@ -43,7 +43,7 @@ export const NewAuthSessionModal: React.FC<Props> = ({ onAddAuthSession }) => {
   const { env } = useEnv();
 
   const [audience, setAudience] = useState<string>();
-  const [scope, setScope] = useState<string>(AUTH_SESSION_OIDC_DEFAULT_SCOPES);
+  const [scope, setScope] = useState<string>(env.RUNTIME_TOOLS_MANAGEMENT_CONSOLE_OIDC_CLIENT_DEFAULT_SCOPES);
   const [clientId, setClientId] = useState<string>(env.RUNTIME_TOOLS_MANAGEMENT_CONSOLE_OIDC_CLIENT_CLIENT_ID);
 
   const { isNewAuthSessionModalOpen } = useAuthSessions();
@@ -57,9 +57,13 @@ export const NewAuthSessionModal: React.FC<Props> = ({ onAddAuthSession }) => {
     setRuntimeUrl("");
     setAlias("");
     setClientId(env.RUNTIME_TOOLS_MANAGEMENT_CONSOLE_OIDC_CLIENT_CLIENT_ID);
-    setScope(AUTH_SESSION_OIDC_DEFAULT_SCOPES);
+    setScope(env.RUNTIME_TOOLS_MANAGEMENT_CONSOLE_OIDC_CLIENT_DEFAULT_SCOPES);
     setAudience("");
-  }, [env.RUNTIME_TOOLS_MANAGEMENT_CONSOLE_OIDC_CLIENT_CLIENT_ID, setIsNewAuthSessionModalOpen]);
+  }, [
+    env.RUNTIME_TOOLS_MANAGEMENT_CONSOLE_OIDC_CLIENT_CLIENT_ID,
+    env.RUNTIME_TOOLS_MANAGEMENT_CONSOLE_OIDC_CLIENT_DEFAULT_SCOPES,
+    setIsNewAuthSessionModalOpen,
+  ]);
 
   const onConnect = useCallback<React.FormEventHandler>(
     (e) => {
@@ -153,7 +157,14 @@ export const NewAuthSessionModal: React.FC<Props> = ({ onAddAuthSession }) => {
           />
         </FormGroup>
         <FormGroup label="URL" isRequired={true}>
-          {error === "error" ? (
+          <TextInput
+            id="url"
+            aria-label="URL"
+            tabIndex={0}
+            onChange={(_event, val) => setRuntimeUrl(val)}
+            placeholder="Enter a URL..."
+          />
+          {error !== null ? (
             <FormHelperText>
               <HelperText>
                 <HelperTextItem variant="error">{error}</HelperTextItem>
@@ -166,13 +177,6 @@ export const NewAuthSessionModal: React.FC<Props> = ({ onAddAuthSession }) => {
               </HelperText>
             </FormHelperText>
           )}
-          <TextInput
-            id="url"
-            aria-label="URL"
-            tabIndex={0}
-            onChange={(_event, val) => setRuntimeUrl(val)}
-            placeholder="Enter a URL..."
-          />
         </FormGroup>
         <FormGroup isRequired={false}>
           <FormHelperText>

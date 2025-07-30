@@ -42,6 +42,7 @@ import { Text, TextContent, TextVariants } from "@patternfly/react-core/dist/js/
 import { AuthSession, AuthSessionStatus, AUTH_SESSION_NONE } from "./AuthSessionApi";
 import { v4 as uuid } from "uuid";
 import { useAuthProviders } from "../authProviders/AuthProvidersContext";
+import { ReAuthenticateButton } from "./ReAuthenticateHelper";
 
 export type AuthSessionSelectItem = {
   groupLabel: string;
@@ -150,8 +151,7 @@ export function AuthSessionSelect(props: {
       }}
       className={props.isPlain ? "kie-tools--masthead-hoverable" : ""}
       menuAppendTo={props.menuAppendTo ?? "parent"}
-      maxHeight={"400px"}
-      style={{ minWidth: "400px" }}
+      style={{ minWidth: "300px", maxHeight: "300px", overflowY: "scroll" }}
       footer={
         <>
           {showedGroups?.length !== groups?.length && (
@@ -239,7 +239,7 @@ export function AuthSessionSelect(props: {
                 ) {
                   return [];
                 }
-
+                const isInvalidSession = authSessionStatus.get(authSession.id) === AuthSessionStatus.INVALID;
                 if (authSession.type === "none") {
                   return [
                     <SelectOption key={AUTH_SESSION_NONE.id} value={AUTH_SESSION_NONE.id} description={<i>{}</i>}>
@@ -266,6 +266,9 @@ export function AuthSessionSelect(props: {
                         )}
                       </Flex>
                     </SelectOption>,
+                    ...(isInvalidSession
+                      ? [<ReAuthenticateButton key={`reauth-${authSession.id}`} authSession={authSession} />]
+                      : []),
                   ];
                 }
 
@@ -285,6 +288,9 @@ export function AuthSessionSelect(props: {
                         )}
                       </Flex>
                     </SelectOption>,
+                    ...(isInvalidSession
+                      ? [<ReAuthenticateButton key={`reauth-${authSession.id}`} authSession={authSession} />]
+                      : []),
                   ];
                 }
 

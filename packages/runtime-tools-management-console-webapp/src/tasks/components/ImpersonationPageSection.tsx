@@ -31,8 +31,8 @@ import { TextInput } from "@patternfly/react-core/dist/js/components/TextInput";
 import UserTagIcon from "@patternfly/react-icons/dist/esm/icons/user-tag-icon";
 import UserIcon from "@patternfly/react-icons/dist/js/icons/user-icon";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { useHistory } from "react-router";
-import { AuthSessionType, getAuthSessionDisplayInfo, useAuthSession, useAuthSessions } from "../../authSessions";
+import { useLocation, useNavigate } from "react-router-dom";
+import { AuthSessionType, getAuthSessionDisplayInfo, useAuthSessions } from "../../authSessions";
 import { QueryParams } from "../../navigation/Routes";
 import { useQueryParams } from "../../navigation/queryParams/QueryParamsContext";
 import {
@@ -41,13 +41,14 @@ import {
   useRuntimeDispatch,
   useRuntimeInfo,
 } from "../../runtime/RuntimeContext";
-import { HelperText, HelperTextItem } from "@patternfly/react-core";
+import { HelperText, HelperTextItem } from "@patternfly/react-core/dist/js/components/HelperText";
 
 export const ImpersonationPageSection: React.FC<{}> = () => {
   const { impersonationUsername, impersonationGroups } = useRuntime();
   const { canImpersonate } = useRuntimeInfo();
   const queryParams = useQueryParams();
-  const history = useHistory();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     setImpersonationUsername,
@@ -86,15 +87,25 @@ export const ImpersonationPageSection: React.FC<{}> = () => {
         return new Map(currentRuntimePathSearchParams);
       });
 
-      history.replace({
-        pathname: history.location.pathname,
-        search: queryParams
-          .with(QueryParams.IMPERSONATION_USER, newQueryParams[QueryParams.IMPERSONATION_USER])
-          .with(QueryParams.IMPERSONATION_GROUPS, newQueryParams[QueryParams.IMPERSONATION_GROUPS])
-          .toString(),
-      });
+      navigate(
+        {
+          pathname: location.pathname,
+          search: queryParams
+            .with(QueryParams.IMPERSONATION_USER, newQueryParams[QueryParams.IMPERSONATION_USER])
+            .with(QueryParams.IMPERSONATION_GROUPS, newQueryParams[QueryParams.IMPERSONATION_GROUPS])
+            .toString(),
+        },
+        { replace: true }
+      );
     },
-    [history, queryParams, setImpersonationGroup, setImpersonationUsername, setRuntimePathSearchParams]
+    [
+      location.pathname,
+      navigate,
+      queryParams,
+      setImpersonationGroup,
+      setImpersonationUsername,
+      setRuntimePathSearchParams,
+    ]
   );
 
   const onClear = useCallback(() => {
@@ -155,34 +166,24 @@ export const ImpersonationPageSection: React.FC<{}> = () => {
               />
             }
           >
-            <FormGroup label={"User"}>
+            <FormGroup label={"User"} style={{ maxWidth: "500px" }}>
               <TextInput
-                className={
-                  username && username === impersonationUsername
-                    ? "pf-v5-c-form-control pf-m-success"
-                    : "pf-v5-c-form-control pf-m-expanded"
-                }
+                validated={username && username === impersonationUsername ? "success" : "default"}
                 id="username"
                 aria-label="Username"
                 autoFocus={false}
                 placeholder={`None (currently as '${authSessionInfo.username}')`}
                 tabIndex={1}
-                style={{ maxWidth: "400px" }}
                 value={username ?? ""}
                 onChange={(_event, val) => setUsername(val)}
               />
             </FormGroup>
-            <FormGroup label={"Groups"}>
+            <FormGroup label={"Groups"} style={{ maxWidth: "500px" }}>
               <TextInput
-                className={
-                  groups && groups === impersonationGroups
-                    ? "pf-v5-c-form-control pf-m-success"
-                    : "pf-v5-c-form-control pf-m-expanded"
-                }
+                validated={groups && groups === impersonationGroups ? "success" : "default"}
                 id="groups"
                 aria-label="Groups"
                 tabIndex={2}
-                style={{ maxWidth: "400px" }}
                 value={groups ?? ""}
                 onChange={(_event, val) => setGroups(val)}
                 placeholder={`None (currently ${currentAuthSession?.type === AuthSessionType.OPENID_CONNECT ? currentAuthSession.roles?.join(",") ?? "empty" : "empty"})`}

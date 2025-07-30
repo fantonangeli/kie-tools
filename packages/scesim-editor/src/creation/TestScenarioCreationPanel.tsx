@@ -28,8 +28,10 @@ import { Checkbox } from "@patternfly/react-core/dist/js/components/Checkbox";
 import {
   EmptyState,
   EmptyStateIcon,
+  EmptyStateBody,
   EmptyStateFooter,
   EmptyStateHeader,
+  EmptyStateActions,
 } from "@patternfly/react-core/dist/js/components/EmptyState";
 import { Form, FormGroup } from "@patternfly/react-core/dist/js/components/Form";
 import { FormSelect, FormSelectOption } from "@patternfly/react-core/dist/js/components/FormSelect";
@@ -185,14 +187,14 @@ function TestScenarioCreationPanel() {
 
   return (
     <EmptyState>
-      <EmptyStateHeader
-        titleText={<>{i18n.creationPanel.title}</>}
-        icon={<EmptyStateIcon icon={CubesIcon} />}
-        headingLevel={"h6"}
-      />
-      <EmptyStateFooter>
+      <EmptyStateHeader icon={<EmptyStateIcon icon={CubesIcon} />}>
+        <Title headingLevel={"h6"} size={"md"}>
+          {i18n.creationPanel.title}
+        </Title>
+      </EmptyStateHeader>
+      <EmptyStateBody>
         <Form className="kie-scesim-editor--creation-form" isHorizontal>
-          <FormGroup isRequired label={i18n.creationPanel.assetsGroup}>
+          <FormGroup isRequired label={<span style={{ color: "black" }}>{i18n.creationPanel.assetsGroup}</span>}>
             <FormSelect
               id="asset-type-select"
               name="asset-type-select"
@@ -267,7 +269,7 @@ function TestScenarioCreationPanel() {
               <FormGroup label={i18n.creationPanel.kieSessionGroup}>
                 <TextInput
                   onChange={(_event, value) => setKieSessionRule(value)}
-                  placeholder={"<" + i18n.creationPanel.optional + ">"}
+                  placeholder={`<${i18n.creationPanel.optional}>`}
                   type="text"
                   value={kieSessionRule}
                 />
@@ -275,7 +277,7 @@ function TestScenarioCreationPanel() {
               <FormGroup label={i18n.creationPanel.kieAgendaGroup}>
                 <TextInput
                   onChange={(_event, value) => setRuleFlowGroup(value)}
-                  placeholder={"<" + i18n.creationPanel.optional + ">"}
+                  placeholder={`<${i18n.creationPanel.optional}>`}
                   type="text"
                   value={ruleFlowGroup}
                 />
@@ -328,14 +330,19 @@ function TestScenarioCreationPanel() {
             title="Rule based Test Scenario is not supported yet."
           />
         )}
-        <Button
-          icon={<AddIcon />}
-          isDisabled={assetType === "" || assetType === "RULE" || (assetType === "DMN" && !selectedDmnModel)}
-          onClick={createTestScenario}
-          variant="primary"
-        >
-          {i18n.creationPanel.createButton}
-        </Button>
+      </EmptyStateBody>
+
+      <EmptyStateFooter>
+        <EmptyStateActions>
+          <Button
+            icon={<AddIcon />}
+            isDisabled={assetType === "" || assetType === "RULE" || (assetType === "DMN" && !selectedDmnModel)}
+            onClick={createTestScenario}
+            variant="primary"
+          >
+            {i18n.creationPanel.createButton}
+          </Button>
+        </EmptyStateActions>
       </EmptyStateFooter>
     </EmptyState>
   );

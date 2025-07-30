@@ -41,6 +41,7 @@ import { DmnRunnerExtendedServicesError } from "./DmnRunnerContextProvider";
 import { MessageBusClientApi } from "@kie-tools-core/envelope-bus/dist/api";
 import { NewDmnEditorEnvelopeApi } from "@kie-tools/dmn-editor-envelope/dist/NewDmnEditorEnvelopeApi";
 import { useSettings } from "../settings/SettingsContext";
+import { useSharedValue } from "@kie-tools-core/envelope-bus/dist/hooks";
 
 enum ButtonPosition {
   INPUT,
@@ -165,6 +166,11 @@ export function DmnRunnerDrawerPanelContent() {
     onOpenPanel(PanelId.DMN_RUNNER_TABLE);
   }, [onOpenPanel, setDmnRunnerMode]);
 
+  const [openedBoxedExpressionNodeId, _] = useSharedValue(
+    (envelopeServer?.envelopeApi as MessageBusClientApi<NewDmnEditorEnvelopeApi>)?.shared
+      ?.newDmnEditor_openedBoxedExpressionEditorNodeId ?? undefined
+  );
+
   return (
     <DrawerPanelContent
       id={"kogito-panel-content"}
@@ -216,7 +222,7 @@ export function DmnRunnerDrawerPanelContent() {
                             aria-label="Select Row Input"
                             toggle={
                               <DropdownToggle
-                                style={{ padding: "0px" }}
+                                style={{ padding: "0px", whiteSpace: "nowrap" }}
                                 toggleIndicator={null}
                                 onToggle={() => openRowSelection((prevState) => !prevState)}
                               >
@@ -335,10 +341,11 @@ export function DmnRunnerDrawerPanelContent() {
                           ? (nodeId: string) => {
                               const newDmnEditorEnvelopeApi =
                                 envelopeServer?.envelopeApi as MessageBusClientApi<NewDmnEditorEnvelopeApi>;
-                              newDmnEditorEnvelopeApi.notifications.dmnEditor_openBoxedExpressionEditor.send(nodeId);
+                              newDmnEditorEnvelopeApi.notifications.newDmnEditor_openBoxedExpressionEditor.send(nodeId);
                             }
                           : undefined
                       }
+                      openedBoxedExpressionEditorNodeId={openedBoxedExpressionNodeId}
                     />
                   </PageSection>
                 </div>

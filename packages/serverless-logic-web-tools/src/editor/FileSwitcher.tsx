@@ -306,7 +306,7 @@ export function FileSwitcher(props: { workspace: ActiveWorkspace; workspaceFile:
                               }
                             }}
                             onKeyDown={handleWorkspaceFileNameKeyDown}
-                            onChange={(_event, value) => checkNewFileName}
+                            onChange={(_event, value) => checkNewFileName(value)}
                             readOnlyVariant={!isEditable(props.workspaceFile.name) ? "plain" : undefined}
                             ref={workspaceFileNameRef}
                             type={"text"}
@@ -659,8 +659,7 @@ export function FileMenuItem(props: { file: WorkspaceFile; onSelectFile: () => v
       <Link
         to={routes.workspaceWithFilePath.path({
           workspaceId: props.file.workspaceId,
-          fileRelativePath: props.file.relativePathWithoutExtension,
-          extension: props.file.extension,
+          fileRelativePath: props.file.relativePath,
         })}
       >
         <FileName file={props.file} />

@@ -27,11 +27,35 @@ import UsersIcon from "@patternfly/react-icons/dist/js/icons/users-icon";
 import { AuthProvider } from "./AuthProvidersApi";
 import { Icon, IconComponentProps } from "@patternfly/react-core/dist/js/components/Icon";
 
+export const getSize = (size: string | undefined) => {
+  switch (size) {
+    case "sm":
+      return "1em";
+    case "md":
+      return "1.5em";
+    case "lg":
+      return "2em";
+    case "xl":
+      return "3em";
+    default:
+      return "1em";
+  }
+};
+
 export type AuthProviderIconProps = Pick<IconComponentProps, "size"> & {
   authProvider: AuthProvider | undefined;
 };
 export function AuthProviderIcon(props: AuthProviderIconProps) {
   if (!props.authProvider) {
+    return (
+      <Icon size={props.size}>
+        <UsersIcon />
+      </Icon>
+    );
+  }
+
+  if (props.authProvider.iconPath) {
+    const baseAlign = -0.125 * Number.parseFloat(getSize(props.size)); // Copied from PatternFly
     return (
       <Icon size={props.size}>
         <UsersIcon />

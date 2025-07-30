@@ -23,7 +23,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/apache/incubator-kie-tools/packages/sonataflow-operator/version"
+	"github.com/apache/incubator-kie-tools/packages/sonataflow-operator/api/version"
 
 	appsv1 "k8s.io/api/apps/v1"
 
@@ -112,6 +112,9 @@ type PlatformServiceHandler interface {
 	// SetServiceUrlInWorkflowStatus sets the service url in a workflow's status.
 	SetServiceUrlInWorkflowStatus(workflow *operatorapi.SonataFlow)
 
+	// GetServiceSource returns the source Broker configured for the given service by applying the following precedence rule.
+	// The source declared in the given service definition is returned first, if any, otherwise a source declared in the
+	// service platform is returned, if any.
 	GetServiceSource() *duckv1.Destination
 
 	// Check if K_SINK has injected for Job Service. No Op for Data Index
@@ -288,7 +291,7 @@ func (d *DataIndexHandler) ConfigurePersistence(containerSpec *corev1.Container)
 		p := persistence.RetrievePostgreSQLConfiguration(d.platform.Spec.Services.DataIndex.Persistence, d.platform.Spec.Persistence, d.GetServiceName())
 		c := containerSpec.DeepCopy()
 		c.Image = d.GetServiceImageName(constants.PersistenceTypePostgreSQL)
-		c.Env = append(c.Env, persistence.ConfigurePostgreSQLEnv(p.PostgreSQL, d.GetServiceName(), d.platform.Namespace)...)
+		c.Env = append(c.Env, persistence.ConfigurePostgreSQLEnv(p.PostgreSQL, d.GetServiceName(), d.platform.Namespace, false)...)
 
 		dbMigrationStrategyService := isDBMigrationStrategyService(d.platform.Spec.Services.DataIndex.Persistence)
 
@@ -481,7 +484,7 @@ func (j *JobServiceHandler) ConfigurePersistence(containerSpec *corev1.Container
 		c := containerSpec.DeepCopy()
 		c.Image = j.GetServiceImageName(constants.PersistenceTypePostgreSQL)
 		p := persistence.RetrievePostgreSQLConfiguration(j.platform.Spec.Services.JobService.Persistence, j.platform.Spec.Persistence, j.GetServiceName())
-		c.Env = append(c.Env, persistence.ConfigurePostgreSQLEnv(p.PostgreSQL, j.GetServiceName(), j.platform.Namespace)...)
+		c.Env = append(c.Env, persistence.ConfigurePostgreSQLEnv(p.PostgreSQL, j.GetServiceName(), j.platform.Namespace, true)...)
 
 		dbMigrationStrategyService := isDBMigrationStrategyService(j.platform.Spec.Services.JobService.Persistence)
 
@@ -510,16 +513,6 @@ func (j *JobServiceHandler) GenerateServiceProperties() (*properties.Properties,
 		props.Set(constants.JobServiceKSinkInjectionHealthCheck, "false")
 	} else {
 		props.Set(constants.JobServiceKSinkInjectionHealthCheck, "true")
-	}
-
-	// add data source reactive URL
-	if j.hasPostgreSQLConfigured() {
-		p := persistence.RetrievePostgreSQLConfiguration(j.platform.Spec.Services.JobService.Persistence, j.platform.Spec.Persistence, j.GetServiceName())
-		dataSourceReactiveURL, err := generateReactiveURL(p.PostgreSQL, j.GetServiceName(), j.platform.Namespace, constants.DefaultDatabaseName, constants.DefaultPostgreSQLPort)
-		if err != nil {
-			return nil, err
-		}
-		props.Set(constants.JobServiceDataSourceReactiveURL, dataSourceReactiveURL)
 	}
 
 	if isDataIndexEnabled(j.platform) {
@@ -690,7 +683,7 @@ func (d *DataIndexHandler) GenerateKnativeResources(platform *operatorapi.Sonata
 		d.newTrigger(lbl, annotations, brokerName, namespace, serviceName, "process-node", "ProcessInstanceNodeDataEvent", constants.KogitoProcessInstancesEventsPath, platform),
 		d.newTrigger(lbl, annotations, brokerName, namespace, serviceName, "process-state", "ProcessInstanceStateDataEvent", constants.KogitoProcessInstancesEventsPath, platform),
 		d.newTrigger(lbl, annotations, brokerName, namespace, serviceName, "process-variable", "ProcessInstanceVariableDataEvent", constants.KogitoProcessInstancesEventsPath, platform),
-		d.newTrigger(lbl, annotations, brokerName, namespace, serviceName, "process-definition", "ProcessDefinitionEvent", constants.KogitoProcessDefinitionsEventsPath, platform),
+		d.newTrigger(lbl, managedAnnotations, brokerName, namespace, serviceName, "process-definition", "ProcessDefinitionEvent", constants.KogitoProcessDefinitionsEventsPath, platform),
 		d.newTrigger(lbl, annotations, brokerName, namespace, serviceName, "process-instance-multiple", "MultipleProcessInstanceDataEvent", constants.KogitoProcessInstancesMultiEventsPath, platform),
 		d.newTrigger(lbl, managedAnnotations, brokerName, namespace, serviceName, "jobs", "JobEvent", constants.KogitoJobsPath, platform)}, nil, nil
 }

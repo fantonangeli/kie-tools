@@ -18,7 +18,7 @@
  */
 
 import * as React from "react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect } from "react";
 import { DMN15__tItemDefinition } from "@kie-tools/dmn-marshaller/dist/schemas/dmn-1_5/ts-gen/types";
 import { Normalized } from "@kie-tools/dmn-marshaller/dist/normalization/normalize";
 import { getNewDmnIdRandomizer } from "@kie-tools/dmn-marshaller/dist/idRandomizer/dmnIdRandomizer";
@@ -51,6 +51,10 @@ import { PasteIcon } from "@patternfly/react-icons/dist/js/icons/paste-icon";
 import { InputGroup, InputGroupItem } from "@patternfly/react-core/dist/js/components/InputGroup";
 import { SearchInput } from "@patternfly/react-core/dist/js/components/SearchInput";
 import {
+  ImportJavaClassesWizard,
+  ImportJavaClassesI18nDictionariesProvider,
+} from "@kie-tools/import-java-classes-component";
+import {
   DMN_EDITOR_DATA_TYPES_CLIPBOARD_MIME_TYPE,
   DmnEditorDataTypesClipboard,
   getClipboard,
@@ -58,6 +62,8 @@ import {
 import { addTopLevelItemDefinition as _addTopLevelItemDefinition } from "../mutations/addTopLevelItemDefinition";
 import { useExternalModels } from "../includedModels/DmnEditorDependenciesContext";
 import { useSettings } from "../settings/DmnEditorSettingsContext";
+import { ImportJavaClassesDropdownItem, ImportJavaClassNameConflictsModal } from "./ImportJavaClasses";
+import { useImportJavaClasses } from "./useImportJavaClasses";
 
 export type DataType = {
   itemDefinition: Normalized<DMN15__tItemDefinition>;
@@ -93,7 +99,7 @@ export function DataTypes() {
   const thisDmnsNamespace = useDmnEditorStore((s) => s.dmn.model.definitions["@_namespace"]);
   const dmnEditorStoreApi = useDmnEditorStoreApi();
   const activeItemDefinitionId = useDmnEditorStore((s) => s.dataTypesEditor.activeItemDefinitionId);
-  const settings = useSettings();
+  const { isReadOnly, isImportDataTypesFromJavaClassesSupported, javaCodeCompletionService } = useSettings();
 
   const [filter, setFilter] = useState("");
   const { externalModelsByNamespace } = useExternalModels();
@@ -105,15 +111,31 @@ export function DataTypes() {
   );
   const dataTypesTree = useDmnEditorStore((s) => s.computed(s).getDataTypes(externalModelsByNamespace).dataTypesTree);
 
+  const [isOpenImportJavaClassesWizard, setOpenImportJavaClassesWizard] = useState(false);
+  const {
+    conflictsClasses,
+    handleConflictAction,
+    handleImportJavaClasses,
+    isConflictsOccured,
+    handleCloseConflictsModal,
+  } = useImportJavaClasses();
+  const handleImportJavaClassButtonClick = useCallback(() => {
+    setAddDataTypeDropdownOpen(false);
+    setOpenImportJavaClassesWizard((prevState) => !prevState);
+  }, []);
+
+  useEffect(() => {
+    if (isOpenImportJavaClassesWizard || isConflictsOccured) {
+      setAddDataTypeDropdownOpen(false);
+    }
+  }, [isOpenImportJavaClassesWizard, isConflictsOccured]);
+
   const activeDataType = useMemo(() => {
     return activeItemDefinitionId ? allDataTypesById.get(activeItemDefinitionId) : undefined;
   }, [activeItemDefinitionId, allDataTypesById]);
 
   const filteredTree = useMemo(
-    () =>
-      dataTypesTree.filter(({ itemDefinition: dataType }) =>
-        dataType["@_name"].toLowerCase().includes(filter.toLowerCase())
-      ),
+    () => dataTypesTree.filter(({ feelName: dataType }) => dataType.toLowerCase().includes(filter.toLowerCase())),
     [filter, dataTypesTree]
   );
 
@@ -148,7 +170,7 @@ export function DataTypes() {
   );
 
   const pasteTopLevelItemDefinition = useCallback(() => {
-    if (settings.isReadOnly) {
+    if (isReadOnly) {
       return;
     }
     navigator.clipboard.readText().then((text) => {
@@ -169,12 +191,41 @@ export function DataTypes() {
         addTopLevelItemDefinition(itemDefinition);
       }
     });
-  }, [addTopLevelItemDefinition, settings.isReadOnly]);
+  }, [addTopLevelItemDefinition, isReadOnly]);
 
   const [isAddDataTypeDropdownOpen, setAddDataTypeDropdownOpen] = useState(false);
 
   // Using this object because DropdownToggleAction's props doesn't accept a 'title'.
   const extraPropsForDropdownToggleAction = { title: "New Data Type" };
+
+  const addDataTypesDropdownItems = useMemo(() => {
+    const dropdownItems = [
+      <DropdownItem
+        key={"paste"}
+        onClick={() => pasteTopLevelItemDefinition()}
+        style={{ minWidth: "240px" }}
+        icon={<PasteIcon />}
+      >
+        Paste
+      </DropdownItem>,
+    ];
+    if (isImportDataTypesFromJavaClassesSupported && javaCodeCompletionService) {
+      dropdownItems.unshift(
+        <ImportJavaClassesI18nDictionariesProvider key={"import-java-classes"}>
+          <ImportJavaClassesDropdownItem
+            javaCodeCompletionService={javaCodeCompletionService}
+            onClick={handleImportJavaClassButtonClick}
+          />
+        </ImportJavaClassesI18nDictionariesProvider>
+      );
+    }
+    return dropdownItems;
+  }, [
+    isImportDataTypesFromJavaClassesSupported,
+    javaCodeCompletionService,
+    handleImportJavaClassButtonClick,
+    pasteTopLevelItemDefinition,
+  ]);
 
   return (
     <>
@@ -199,7 +250,7 @@ export function DataTypes() {
                   className={"kie-dmn-editor--data-types-filter kie-dmn-editor--sticky-top-glass-header"}
                 >
                   <InputGroup>
-                    <InputGroupItem>
+                    <InputGroupItem isFill>
                       <SearchInput
                         placeholder="Filter..."
                         value={filter}
@@ -208,7 +259,7 @@ export function DataTypes() {
                       />
                     </InputGroupItem>
 
-                    {!settings.isReadOnly && (
+                    {!isReadOnly && (
                       <Dropdown
                         onSelect={() => setAddDataTypeDropdownOpen(false)}
                         menuAppendTo={document.body}
@@ -231,16 +282,7 @@ export function DataTypes() {
                         }
                         position={DropdownPosition.right}
                         isOpen={isAddDataTypeDropdownOpen}
-                        dropdownItems={[
-                          <DropdownItem
-                            key={"paste"}
-                            onClick={() => pasteTopLevelItemDefinition()}
-                            style={{ minWidth: "240px" }}
-                            icon={<PasteIcon />}
-                          >
-                            Paste
-                          </DropdownItem>,
-                        ]}
+                        dropdownItems={addDataTypesDropdownItems}
                       />
                     )}
                   </InputGroup>
@@ -271,7 +313,7 @@ export function DataTypes() {
                         {(namespace === thisDmnsNamespace && (
                           <DataTypeName
                             relativeToNamespace={thisDmnsNamespace}
-                            isReadOnly={settings.isReadOnly || namespace !== thisDmnsNamespace}
+                            isReadOnly={isReadOnly || namespace !== thisDmnsNamespace}
                             itemDefinition={itemDefinition}
                             isActive={isActive}
                             editMode={"double-click"}
@@ -307,10 +349,28 @@ export function DataTypes() {
             <DrawerContentBody>
               {activeDataType && (
                 <DataTypePanel
-                  isReadOnly={settings.isReadOnly || activeDataType.namespace !== thisDmnsNamespace}
+                  isReadOnly={isReadOnly || activeDataType.namespace !== thisDmnsNamespace}
                   dataType={activeDataType}
                   allDataTypesById={allDataTypesById}
                   editItemDefinition={editItemDefinition}
+                />
+              )}
+              {isOpenImportJavaClassesWizard && javaCodeCompletionService && (
+                <ImportJavaClassesI18nDictionariesProvider>
+                  <ImportJavaClassesWizard
+                    javaCodeCompletionService={javaCodeCompletionService}
+                    isOpen={isOpenImportJavaClassesWizard}
+                    onSave={handleImportJavaClasses}
+                    onClose={handleImportJavaClassButtonClick}
+                  />
+                </ImportJavaClassesI18nDictionariesProvider>
+              )}
+              {isConflictsOccured && conflictsClasses?.length > 0 && (
+                <ImportJavaClassNameConflictsModal
+                  isOpen={isConflictsOccured}
+                  handleConfirm={handleConflictAction}
+                  conflictedJavaClasses={conflictsClasses}
+                  onClose={handleCloseConflictsModal}
                 />
               )}
             </DrawerContentBody>

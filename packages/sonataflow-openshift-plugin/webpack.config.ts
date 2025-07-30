@@ -57,7 +57,7 @@ export default async (webpackEnv: any, webpackArgv: any) => {
             "@kie-tools-core/envelope-bus/dist": "@kie-tools-core/envelope-bus/src",
             "@kie-tools-core/workspace/dist": "@kie-tools-core/workspace/src",
             "@kie-tools/json-yaml-language-service/dist": "@kie-tools/json-yaml-language-service/src",
-            "@kie-tools/runtime-tools-components/dist": "@kie-tools/runtime-tools-components/src/common",
+            "@kie-tools/runtime-tools-components/dist": "@kie-tools/runtime-tools-components/src",
             "@kie-tools/serverless-workflow-combined-editor/dist": "@kie-tools/serverless-workflow-combined-editor/src",
             "@kie-tools/serverless-workflow-jq-expressions/dist": "@kie-tools/serverless-workflow-jq-expressions/src",
             "@kie-tools/serverless-workflow-language-service/dist":

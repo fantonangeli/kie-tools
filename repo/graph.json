@@ -2667,6 +2667,11 @@
       },
       {
         "source": "@kie-tools/sonataflow-openshift-plugin",
+        "target": "@kie-tools/runtime-tools-shared-enveloped-components",
+        "weight": 1
+      },
+      {
+        "source": "@kie-tools/sonataflow-openshift-plugin",
         "target": "@kie-tools/runtime-tools-shared-webapp-components",
         "weight": 1
       },

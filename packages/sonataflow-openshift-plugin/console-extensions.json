@@ -3,24 +3,6 @@
     "type": "console.page/route",
     "properties": {
       "exact": true,
-      "path": "/example",
-      "component": { "$codeRef": "ExamplePage" }
-    }
-  },
-  {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "example",
-      "name": "%plugin__sonataflow-openshift-plugin~Plugin Example%",
-      "href": "/example",
-      "perspective": "admin",
-      "section": "home"
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
-      "exact": true,
       "path": "/editor_page",
       "component": { "$codeRef": "EditorPage" }
     }

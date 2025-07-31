@@ -4,17 +4,18 @@
     "properties": {
       "exact": true,
       "path": "/editor_page",
-      "component": { "$codeRef": "EditorPage" }
+      "component": { "$codeRef": "SonataFlow" }
     }
   },
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "editorPage",
-      "name": "%plugin__sonataflow-openshift-plugin~Editor Page%",
+      "id": "sonataflow",
+      "name": "%plugin__sonataflow-openshift-plugin~SonataFlow%",
       "href": "/editor_page",
       "perspective": "admin",
-      "section": "home"
+      "section": "serverless",
+      "insertAfter": "serverlessfunctions"
     }
   }
 ]

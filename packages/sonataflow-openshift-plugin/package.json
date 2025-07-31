@@ -139,7 +139,7 @@
     "description": "Template project for OpenShift Console plugins. Edit package.json to change this message and the plugin name.",
     "displayName": "OpenShift Console Plugin Template",
     "exposedModules": {
-      "EditorPage": "./components/EditorPage/EditorPage"
+      "SonataFlow": "./components/EditorPage/EditorPage"
     },
     "name": "sonataflow-openshift-plugin",
     "version": "0.0.0"

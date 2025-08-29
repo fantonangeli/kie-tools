@@ -22,12 +22,8 @@ import { useOnViewportChange, Viewport } from "reactflow";
 import * as React from "react";
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { generateUuid } from "@kie-tools/boxed-expression-component/dist/api";
-import {
-  DC__Bounds,
-  DC__Dimension,
-  DMN15__tDecisionService,
-  DMN15__tDefinitions,
-} from "@kie-tools/dmn-marshaller/dist/schemas/dmn-1_5/ts-gen/types";
+import { DC__Bounds, DC__Dimension } from "@kie-tools/dmn-marshaller/dist/schemas/dmn-1_6/ts-gen/types";
+import { DMN_LATEST__tDecisionService, DMN_LATEST__tDefinitions } from "@kie-tools/dmn-marshaller";
 import { Normalized, normalize } from "@kie-tools/dmn-marshaller/dist/normalization/normalize";
 import { buildXmlHref, parseXmlHref, xmlHrefToQName } from "@kie-tools/dmn-marshaller/dist/xml";
 import { buildXmlQName } from "@kie-tools/xml-parser-ts/dist/qNames";
@@ -477,7 +473,7 @@ export const Diagram = React.forwardRef<DiagramRef, { container: React.RefObject
           console.debug(`DMN DIAGRAM: Adding external node`, JSON.stringify(externalNode));
         } else if (e.dataTransfer.getData(MIME_TYPE_FOR_DMN_EDITOR_DRG_NODE)) {
           const drgElement = JSON.parse(e.dataTransfer.getData(MIME_TYPE_FOR_DMN_EDITOR_DRG_NODE)) as Unpacked<
-            Normalized<DMN15__tDefinitions>["drgElement"]
+            Normalized<DMN_LATEST__tDefinitions>["drgElement"]
           >;
 
           const nodeType = getNodeTypeFromDmnObject(drgElement);
@@ -859,7 +855,7 @@ export const Diagram = React.forwardRef<DiagramRef, { container: React.RefObject
 
                   // Update contained Decisions of Decision Service if in expanded form
                   if (node.type === NODE_TYPES.decisionService && !(node.data.shape["@_isCollapsed"] ?? false)) {
-                    const decisionService = node.data.dmnObject as Normalized<DMN15__tDecisionService>;
+                    const decisionService = node.data.dmnObject as Normalized<DMN_LATEST__tDecisionService>;
 
                     const { containedDecisionHrefsRelativeToThisDmn } = getDecisionServicePropertiesRelativeToThisDmn({
                       thisDmnsNamespace: state.dmn.model.definitions["@_namespace"],
@@ -923,6 +919,32 @@ export const Diagram = React.forwardRef<DiagramRef, { container: React.RefObject
                           (parentShape["dc:Bounds"]?.["@_x"] ?? 0) + relativePosinCurrentDS.x;
                         dsShape["dc:Bounds"]["@_y"] =
                           (parentShape["dc:Bounds"]?.["@_y"] ?? 0) + relativePosinCurrentDS.y;
+                      }
+                      // Remove decision from decision service
+                      let isInside = true;
+                      if (
+                        node.data.shape["dc:Bounds"] &&
+                        parentShape &&
+                        parentShape["dc:Bounds"] &&
+                        !parentShape["@_isCollapsed"]
+                      ) {
+                        isInside =
+                          node.data.shape["dc:Bounds"]["@_x"] >= parentShape["dc:Bounds"]["@_x"] &&
+                          node.data.shape["dc:Bounds"]["@_y"] >= parentShape!["dc:Bounds"]["@_y"] &&
+                          node.data.shape["dc:Bounds"]!["@_x"] + node.data.shape["dc:Bounds"]["@_width"] <=
+                            parentShape["dc:Bounds"]["@_x"] + parentShape!["dc:Bounds"]["@_width"] &&
+                          node.data.shape["dc:Bounds"]["@_y"] + node.data.shape["dc:Bounds"]["@_height"] <=
+                            parentShape["dc:Bounds"]["@_y"] + parentShape!["dc:Bounds"]["@_height"];
+                      }
+                      const { diagramElements } = addOrGetDrd({
+                        definitions: state.dmn.model.definitions,
+                        drdIndex: i,
+                      });
+                      const dmnShapeIndex = (diagramElements ?? []).findIndex(
+                        (d) => d["@_dmnElementRef"] === dsShape?.["@_dmnElementRef"]
+                      );
+                      if (dmnShapeIndex >= 0 && !isInside) {
+                        diagramElements?.splice(dmnShapeIndex, 1);
                       }
                     }
                   }
